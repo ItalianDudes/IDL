@@ -4,6 +4,7 @@
  */
 package com.italianDudes.gvedk.common;
 
+import com.italianDudes.gvedk.GVEDK;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -46,13 +47,13 @@ public final class DirectoryHandler { //TODO: Finish DirectoryHandler
         }
     }
     public static boolean createExtensionsFolder(){
-        return createDirectory(Defs.EXTENSIONS_DIR);
+        return createDirectory(GVEDK.Defs.EXTENSIONS_DIR);
     }
     public static boolean createExtensionDirectory(String extensionID){
-        return createDirectory(Defs.EXTENSIONS_DIR+extensionID+"/");
+        return createDirectory(GVEDK.Defs.EXTENSIONS_DIR+extensionID+"/");
     }
     public static boolean deleteExtensionDirectory(String extensionID){
-        return deleteDirectory(Defs.EXTENSIONS_DIR+extensionID+"/");
+        return deleteDirectory(GVEDK.Defs.EXTENSIONS_DIR+extensionID+"/");
     }
 
 

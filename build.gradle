@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'com.italianDudes'
-version 'V1.0R'
+version '1.0'
 
 repositories {
     mavenCentral()

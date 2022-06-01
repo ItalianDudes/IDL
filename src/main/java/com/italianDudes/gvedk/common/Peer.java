@@ -4,6 +4,7 @@
  */
 package com.italianDudes.gvedk.common;
 
+import com.italianDudes.gvedk.GVEDK;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -35,11 +36,11 @@ public class Peer implements Serializable {
         return credential;
     }
     public static Peer establishConnection(String domain, int port, Credential userCredential) throws IOException {
-        return establishConnection(domain,port,Defs.DEFAULT_CONNECTION_TIMEOUT,userCredential);
+        return establishConnection(domain,port, GVEDK.Defs.DEFAULT_CONNECTION_TIMEOUT,userCredential);
     }
     public static Peer establishConnection(String domain, int port, int timeout, Credential userCredential) throws IOException {
         if(timeout<=0){
-            timeout=Defs.DEFAULT_CONNECTION_TIMEOUT;
+            timeout= GVEDK.Defs.DEFAULT_CONNECTION_TIMEOUT;
         }
         InetSocketAddress address = new InetSocketAddress(domain,port);
         Socket connectionSocket = new Socket();

@@ -1,6 +1,6 @@
 package com.italianDudes.gvedk.server.classes;
 
-import com.italianDudes.gvedk.common.Defs;
+import com.italianDudes.gvedk.GVEDK;
 import com.italianDudes.gvedk.server.lists.ClientListHandler;
 import com.italianDudes.gvedk.server.lists.PendingListHandler;
 import com.italianDudes.gvedk.server.lists.RegisteredUserListHandler;
@@ -23,7 +23,7 @@ public final class ServerUtils {
         ServerSocket serverSocket;
         try {
             serverSocket = new ServerSocket(port);
-            serverSocket.setSoTimeout(Defs.DEFAULT_CONNECTION_TIMEOUT);
+            serverSocket.setSoTimeout(GVEDK.Defs.DEFAULT_CONNECTION_TIMEOUT);
             return serverSocket;
         }catch (IllegalArgumentException invalidArgumentException){
             System.err.println("Port out of bounds: 0-65535, provided "+port);
