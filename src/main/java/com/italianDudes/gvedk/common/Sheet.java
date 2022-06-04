@@ -27,6 +27,6 @@ public abstract class Sheet implements Serializable {
     //Abstract Methods
     public abstract Sheet readSheet(String path);
     public abstract void writeSheet(String path);
-    public abstract Sheet receiveSheet(InputStream in);
-    public abstract void sendSheet(OutputStream out);
+    public abstract Sheet receiveSheet(Peer sourcePeer);
+    public abstract void sendSheet(Peer destinationPeer);
 }
