@@ -74,6 +74,9 @@ public final class Logger {
         queue = Executors.newFixedThreadPool(size);
         return createLogFile();
     }
+    public static void log(String message){
+        log(message,false);
+    }
     public static void log(String message, boolean isError){
         queue.submit(new LogWriter(message, isError));
     }
