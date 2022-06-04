@@ -52,6 +52,13 @@ public final class StringHandler {
         return null;
     }
 
+    public static String getStackTrace(final Throwable throwable) {
+        final StringWriter stringWriter = new StringWriter();
+        final PrintWriter out = new PrintWriter(stringWriter, true);
+        throwable.printStackTrace(out);
+        return stringWriter.getBuffer().toString();
+    }
+
     @Deprecated
     public static String receiveString(InputStream in) throws IOException{
 
