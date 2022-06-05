@@ -17,7 +17,6 @@ import java.util.concurrent.TimeUnit;
 public final class Logger {
 
     //Attributes
-    private static final int MAX_QUEUE_SIZE = 5;
     private static final File latestLogFilePointer = new File(GVEDK.Defs.LOG_LATEST_FILE);
     private static BufferedWriter logger = null;
     private static ExecutorService queue = null;
@@ -64,9 +63,6 @@ public final class Logger {
 
     //Methods
     public static boolean init() throws IOException {
-        return init(MAX_QUEUE_SIZE);
-    }
-    public static boolean init(int size) throws IOException {
         File logDirectory = new File(GVEDK.Defs.LOG_DIR);
         if(!logDirectory.exists() || !logDirectory.isDirectory()) {
             if (!logDirectory.mkdir()) {
@@ -74,7 +70,7 @@ public final class Logger {
                 return false;
             }
         }
-        queue = Executors.newFixedThreadPool(size);
+        queue = Executors.newSingleThreadExecutor();
         return createLogFile();
     }
     public static void log(String message){
@@ -85,6 +81,9 @@ public final class Logger {
     }
     public static void log(Throwable throwable){ //Not Fatal by Default
         log(StringHandler.getStackTrace(throwable), new InfoFlags(throwable,false));
+    }
+    public static void logWithCaller(String message){
+        log("["+Thread.currentThread().getStackTrace()[2]+"] "+message);
     }
     public static void log(String message, InfoFlags flags){
         queue.submit(new LogWriter(message, flags));

@@ -26,7 +26,6 @@ public final class StringHandler {
         dataOut.flush();
         out.flush();
     }
-
     public static String getStringBeforeChar(String str, char car){
         if(str==null)
             return null;
@@ -57,6 +56,30 @@ public final class StringHandler {
         final PrintWriter out = new PrintWriter(stringWriter, true);
         throwable.printStackTrace(out);
         return stringWriter.getBuffer().toString();
+    }
+
+    public static String removeCharsInString(String str, char car){
+        StringBuilder stringBuilder = new StringBuilder();
+        char[] strCharArray = str.toCharArray();
+        for (char c : strCharArray) {
+            if (c != car)
+                stringBuilder.append(c);
+        }
+        return stringBuilder.toString();
+    }
+    public static String removeCharsBeforeString(String str, char car){
+        StringBuilder stringBuilder = new StringBuilder();
+        char[] strCharArray = str.toCharArray();
+        boolean endCar = false;
+        for (char c : strCharArray) {
+            if (endCar) {
+                stringBuilder.append(c);
+            } else if (c != car) {
+                endCar = true;
+                stringBuilder.append(c);
+            }
+        }
+        return stringBuilder.toString();
     }
 
     @Deprecated
