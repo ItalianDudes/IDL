@@ -63,10 +63,10 @@ public final class Logger {
     }
 
     //Methods
-    public static boolean initLogger() throws IOException {
-        return initLogger(MAX_QUEUE_SIZE);
+    public static boolean init() throws IOException {
+        return init(MAX_QUEUE_SIZE);
     }
-    public static boolean initLogger(int size) throws IOException {
+    public static boolean init(int size) throws IOException {
         File logDirectory = new File(GVEDK.Defs.LOG_DIR);
         if(!logDirectory.exists() || !logDirectory.isDirectory()) {
             if (!logDirectory.mkdir()) {
@@ -89,7 +89,7 @@ public final class Logger {
     public static void log(String message, InfoFlags flags){
         queue.submit(new LogWriter(message, flags));
     }
-    private static boolean saveLog() throws IOException{
+    private static boolean save() throws IOException{
         String date = startTime.format(DateTimeFormatter.BASIC_ISO_DATE)+"_"+startTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
         date = date.replaceAll(":","-");
         date = date.split("\\.")[0];
@@ -97,7 +97,7 @@ public final class Logger {
         FileUtils.copyFile(latestLogFilePointer,newLogDestination);
         return true;
     }
-    public static boolean closeLogger() throws IOException {
+    public static boolean close() throws IOException {
 
         boolean result;
         queue.shutdown();
@@ -116,7 +116,7 @@ public final class Logger {
             System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Can't close log file!");
             throw e;
         }
-        return saveLog();
+        return save();
     }
     private static boolean createLogFile() throws IOException {
         try {
