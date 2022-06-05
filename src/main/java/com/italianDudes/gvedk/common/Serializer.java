@@ -9,7 +9,6 @@ import com.italianDudes.gvedk.common.exceptions.fileIO.ImageNotFoundException;
 import com.italianDudes.gvedk.common.exceptions.socketIO.*;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
 
 @SuppressWarnings("unused")
@@ -68,6 +67,12 @@ public final class Serializer {
     public static void sendImage(Peer peer, File img, boolean advancedLog) throws OutputStreamWriteException, SpecializedStreamInstancingException, ImageNotFoundException, ValidatingStreamException {
         writeImage(peer,img,advancedLog);
     }
+    public static void sendImage(Peer peer, FormattedImage formattedImage) throws OutputStreamWriteException, SpecializedStreamInstancingException, ImageNotFoundException, ValidatingStreamException {
+        writeImage(peer,formattedImage,false);
+    }
+    public static void sendImage(Peer peer, FormattedImage formattedImage, boolean advancedLog) throws OutputStreamWriteException, SpecializedStreamInstancingException, ImageNotFoundException, ValidatingStreamException {
+        writeImage(peer,formattedImage,advancedLog);
+    }
 
     //Public Definitions (Invokers): Receiver
     public static int receiveInt(Peer peer) throws SpecializedStreamInstancingException, InputStreamReadException, ValidatingStreamException {
@@ -112,10 +117,10 @@ public final class Serializer {
     public static Object receiveObject(Peer peer, boolean advancedLog) throws SpecializedStreamInstancingException, InputStreamReadException, ValidatingStreamException, ClassNotFoundException {
         return readObject(peer,advancedLog);
     }
-    public static BufferedImage receiveImage(Peer peer) throws ByteCountReadException, BytesMismatchException, SpecializedStreamInstancingException, CorruptedImageException, InputStreamReadException, ValidatingStreamException {
+    public static FormattedImage receiveImage(Peer peer) throws ByteCountReadException, BytesMismatchException, SpecializedStreamInstancingException, CorruptedImageException, InputStreamReadException, ValidatingStreamException {
         return readImage(peer,false);
     }
-    public static BufferedImage receiveImage(Peer peer, boolean advancedLog) throws ByteCountReadException, BytesMismatchException, SpecializedStreamInstancingException, CorruptedImageException, InputStreamReadException, ValidatingStreamException {
+    public static FormattedImage receiveImage(Peer peer, boolean advancedLog) throws ByteCountReadException, BytesMismatchException, SpecializedStreamInstancingException, CorruptedImageException, InputStreamReadException, ValidatingStreamException {
         return readImage(peer,advancedLog);
     }
 
@@ -334,6 +339,42 @@ public final class Serializer {
             throw new OutputStreamWriteException(e);
         }
     }
+    private static void writeImage(Peer peer, FormattedImage formattedImage, boolean advancedLog) throws ValidatingStreamException, SpecializedStreamInstancingException, ImageNotFoundException, OutputStreamWriteException {
+        try {
+            checkOutputStreamValidity(peer, advancedLog);
+        }catch (NullPeerException e){
+            if(advancedLog)
+                e.printStackTrace();
+            throw e;
+        }
+        ByteArrayOutputStream outByte = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(formattedImage.getImage(),formattedImage.getFormatName(),outByte);
+        }catch (IOException e){
+            if(advancedLog)
+                e.printStackTrace();
+            throw new ImageNotFoundException(e);
+        }
+        DataOutputStream outStream;
+        try {
+            outStream = new DataOutputStream(peer.getPeerSocket().getOutputStream());
+        }catch (IOException e){
+            if(advancedLog)
+                e.printStackTrace();
+            throw new SpecializedStreamInstancingException(e);
+        }
+        Serializer.sendString(peer,formattedImage.getFormatName());
+        try {
+            outStream.writeInt(outByte.size());
+            outStream.flush();
+            peer.getPeerSocket().getOutputStream().write(outByte.toByteArray(), 0, outByte.size());
+            peer.getPeerSocket().getOutputStream().flush();
+        } catch (IOException e){
+            if(advancedLog)
+                e.printStackTrace();
+            throw new OutputStreamWriteException(e);
+        }
+    }
 
     //Private Definitions: Input
     private static int readInt(Peer peer, boolean advancedLog) throws ValidatingStreamException, SpecializedStreamInstancingException, InputStreamReadException {
@@ -531,7 +572,7 @@ public final class Serializer {
         return obj;
     }
 
-    private static BufferedImage readImage(Peer peer, boolean advancedLog) throws ValidatingStreamException, SpecializedStreamInstancingException, ByteCountReadException, InputStreamReadException, CorruptedImageException, BytesMismatchException {
+    private static FormattedImage readImage(Peer peer, boolean advancedLog) throws ValidatingStreamException, SpecializedStreamInstancingException, ByteCountReadException, InputStreamReadException, CorruptedImageException, BytesMismatchException {
         try {
             checkInputStreamValidity(peer, advancedLog);
         }catch (NullPeerException e){
@@ -539,6 +580,7 @@ public final class Serializer {
                 e.printStackTrace();
             throw e;
         }
+        String formatName = Serializer.receiveString(peer);
         DataInputStream inStream;
         try {
             inStream = new DataInputStream(peer.getPeerSocket().getInputStream());
@@ -567,7 +609,7 @@ public final class Serializer {
         }
         if (bytesRead == size) {
             try {
-                return ImageIO.read(new ByteArrayInputStream(bytes));
+                return new FormattedImage(ImageIO.read(new ByteArrayInputStream(bytes)),formatName);
             }catch (IOException e){
                 if(advancedLog)
                     e.printStackTrace();

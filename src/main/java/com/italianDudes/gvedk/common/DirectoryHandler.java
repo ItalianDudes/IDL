@@ -55,6 +55,9 @@ public final class DirectoryHandler { //TODO: Finish DirectoryHandler
     public static boolean deleteExtensionDirectory(String extensionID){
         return deleteDirectory(GVEDK.Defs.EXTENSIONS_DIR+extensionID+"/");
     }
+    public static boolean directoryExist(File directory){
+        return directory.exists() && directory.isDirectory();
+    }
 
 
 }
