@@ -61,10 +61,10 @@ public final class Serializer {
     public static void sendObject(Peer peer, Object obj, boolean advancedLog) throws OutputStreamWriteException, SpecializedStreamInstancingException, ValidatingStreamException, NotSerializableException {
         writeObject(peer,obj,advancedLog);
     }
-    public static void sendImage(Peer peer, File img) throws OutputStreamWriteException, SpecializedStreamInstancingException, ImageNotFoundException, ValidatingStreamException {
+    public static void sendImage(Peer peer, File img) throws IOException {
         writeImage(peer,img,false);
     }
-    public static void sendImage(Peer peer, File img, boolean advancedLog) throws OutputStreamWriteException, SpecializedStreamInstancingException, ImageNotFoundException, ValidatingStreamException {
+    public static void sendImage(Peer peer, File img, boolean advancedLog) throws IOException {
         writeImage(peer,img,advancedLog);
     }
     public static void sendImage(Peer peer, FormattedImage formattedImage) throws OutputStreamWriteException, SpecializedStreamInstancingException, ImageNotFoundException, ValidatingStreamException {
@@ -304,40 +304,8 @@ public final class Serializer {
             throw new OutputStreamWriteException(e);
         }
     }
-    private static void writeImage(Peer peer, File img, boolean advancedLog) throws ValidatingStreamException, SpecializedStreamInstancingException, ImageNotFoundException, OutputStreamWriteException {
-        try {
-            checkOutputStreamValidity(peer, advancedLog);
-        }catch (NullPeerException e){
-            if(advancedLog)
-                e.printStackTrace();
-            throw e;
-        }
-        ByteArrayOutputStream outByte = new ByteArrayOutputStream();
-        try {
-            ImageIO.write(ImageIO.read(img), ImageHandler.getImageExtension(img.getName()), outByte);
-        }catch (IOException e){
-            if(advancedLog)
-                e.printStackTrace();
-            throw new ImageNotFoundException(e);
-        }
-        DataOutputStream outStream;
-        try {
-            outStream = new DataOutputStream(peer.getPeerSocket().getOutputStream());
-        }catch (IOException e){
-            if(advancedLog)
-                e.printStackTrace();
-            throw new SpecializedStreamInstancingException(e);
-        }
-        try {
-            outStream.writeInt(outByte.size());
-            outStream.flush();
-            peer.getPeerSocket().getOutputStream().write(outByte.toByteArray(), 0, outByte.size());
-            peer.getPeerSocket().getOutputStream().flush();
-        } catch (IOException e){
-            if(advancedLog)
-                e.printStackTrace();
-            throw new OutputStreamWriteException(e);
-        }
+    private static void writeImage(Peer peer, File img, boolean advancedLog) throws IOException {
+        writeImage(peer, new FormattedImage(ImageIO.read(img),StringHandler.getFileExtension(img)),advancedLog);
     }
     private static void writeImage(Peer peer, FormattedImage formattedImage, boolean advancedLog) throws ValidatingStreamException, SpecializedStreamInstancingException, ImageNotFoundException, OutputStreamWriteException {
         try {

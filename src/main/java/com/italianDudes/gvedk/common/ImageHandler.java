@@ -11,24 +11,15 @@ import java.io.*;
 @SuppressWarnings("unused")
 public final class ImageHandler {
 
+    //Constructors
     private ImageHandler(){
         throw new UnsupportedOperationException("Can't instantiate this class!");
     }
 
     //Methods
     public static String getImageExtension(String imagePath){
-
-        if (imagePath != null) {
-            for (int i = imagePath.length() - 1; i >= 0; i--) {
-                if (imagePath.charAt(i) == '.') {
-                    return imagePath.substring(i + 1);
-                }
-            }
-        }
-        return null;
-
+        return StringHandler.getFileExtension(imagePath);
     }
-
     @Deprecated
     public static void sendImage(OutputStream out, String imagePath, final int DIM_BUFFER) throws IOException {
 
@@ -42,9 +33,7 @@ public final class ImageHandler {
         }
 
         in.close();
-
     }
-
     @Deprecated
     public static void sendImage(OutputStream out, String imagePath) throws IOException {
 
@@ -61,7 +50,6 @@ public final class ImageHandler {
 
         in.close();
     }
-
     @Deprecated
     public static void sendImage(OutputStream out, File image) throws IOException {
 
@@ -74,7 +62,6 @@ public final class ImageHandler {
         outStream.writeInt(outByte.size());
         out.write(outByte.toByteArray(),0,outByte.size());
     }
-
     @Deprecated
     public static BufferedImage receiveImage(InputStream in) throws IOException {
 
@@ -91,17 +78,11 @@ public final class ImageHandler {
         } else {
             return null;
         }
-
     }
-
     public static void writeImage(String destinationPath, BufferedImage bufferedImage) throws IOException{
-
         ImageIO.write(bufferedImage,getImageExtension(destinationPath),new File(destinationPath));
-
     }
-
     public static BufferedImage readImage(String imagePath) throws IOException{
-
         return ImageIO.read(new File(imagePath));
     }
 

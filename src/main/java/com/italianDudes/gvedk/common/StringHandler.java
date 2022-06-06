@@ -26,6 +26,20 @@ public final class StringHandler {
         dataOut.flush();
         out.flush();
     }
+    public static String getFileExtension(String path){
+        return getFileExtension(new File(path));
+    }
+    public static String getFileExtension(File file){
+        if(file==null)
+            return null;
+        String path = file.getPath();
+        String[] splitPath = path.split("\\.");
+        if(splitPath.length>0){
+            return splitPath[splitPath.length-1];
+        }else {
+            return null;
+        }
+    }
     public static String getStringBeforeChar(String str, char car){
         if(str==null)
             return null;
