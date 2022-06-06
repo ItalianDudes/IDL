@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 public final class Logger {
 
     //Attributes
+    private static boolean isLoggerInitialized = false;
     private static final File latestLogFilePointer = new File(GVEDK.Defs.LOG_LATEST_FILE);
     private static BufferedWriter logger = null;
     private static ExecutorService queue = null;
@@ -63,18 +64,24 @@ public final class Logger {
 
     //Methods
     public static boolean init() throws IOException {
-        File logDirectory = new File(GVEDK.Defs.LOG_DIR);
-        if(!logDirectory.exists() || !logDirectory.isDirectory()) {
-            if (!logDirectory.mkdir()) {
-                System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Can't create log directory!");
-                return false;
+        if(!isLoggerInitialized) {
+            File logDirectory = new File(GVEDK.Defs.LOG_DIR);
+            if (!logDirectory.exists() || !logDirectory.isDirectory()) {
+                if (!logDirectory.mkdir()) {
+                    System.err.println("[ERROR][FATAL][" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "] Can't create log directory!");
+                    return false;
+                }
             }
+            queue = Executors.newSingleThreadExecutor();
+            isLoggerInitialized = createLogFile();
+            return isLoggerInitialized;
+        }else {
+            Logger.log("Can't initialize logger: logger is already initialized!");
+            return false;
         }
-        queue = Executors.newSingleThreadExecutor();
-        return createLogFile();
     }
     public static void log(String message){
-        log(message,new InfoFlags());
+            log(message,new InfoFlags());
     }
     public static void log(Throwable throwable, InfoFlags flags){
         log(StringHandler.getStackTrace(throwable),flags);
@@ -86,7 +93,10 @@ public final class Logger {
         log("["+Thread.currentThread().getStackTrace()[2]+"] "+message);
     }
     public static void log(String message, InfoFlags flags){
-        queue.submit(new LogWriter(message, flags));
+        if(isLoggerInitialized)
+            queue.submit(new LogWriter(message, flags));
+        else
+            System.err.println("[EXCEPTION]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Can't use logger: logger isn't initialized yet!");
     }
     private static boolean save() throws IOException{
         String date = startTime.format(DateTimeFormatter.BASIC_ISO_DATE)+"_"+startTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
@@ -98,24 +108,29 @@ public final class Logger {
     }
     public static boolean close() throws IOException {
 
-        boolean result;
-        queue.shutdown();
-        try {
-            result = queue.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-        }catch (InterruptedException e){
-            System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] An error has occurred during queue termination");
-            result = false;
+        if(isLoggerInitialized) {
+            boolean result;
+            queue.shutdown();
+            try {
+                result = queue.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            } catch (InterruptedException e) {
+                System.err.println("[ERROR][FATAL][" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "] An error has occurred during queue termination");
+                result = false;
+            }
+            if (!result) {
+                System.err.println("[ERROR][FATAL][" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "] An error has occurred during queue termination");
+            }
+            try {
+                logger.close();
+            } catch (IOException e) {
+                System.err.println("[ERROR][FATAL][" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "] Can't close log file!");
+                throw e;
+            }
+            return save();
+        }else{
+            System.err.println("[EXCEPTION]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Can't close logger: logger isn't initialized yet!");
+            return false;
         }
-        if(!result) {
-            System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] An error has occurred during queue termination");
-        }
-        try{
-            logger.close();
-        }catch (IOException e){
-            System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Can't close log file!");
-            throw e;
-        }
-        return save();
     }
     private static boolean createLogFile() throws IOException {
         try {
@@ -139,5 +154,8 @@ public final class Logger {
             System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Can't flush log file!");
             throw e;
         }
+    }
+    public static boolean isIsLoggerInitialized(){
+        return isLoggerInitialized;
     }
 }
