@@ -80,10 +80,16 @@ public final class ImageHandler {
         }
     }
     public static void writeImage(String destinationPath, BufferedImage bufferedImage) throws IOException{
-        ImageIO.write(bufferedImage,getImageExtension(destinationPath),new File(destinationPath));
+        writeImage(new File(destinationPath), bufferedImage);
+    }
+    public static void writeImage(File destinationFile, BufferedImage bufferedImage) throws IOException{
+        ImageIO.write(bufferedImage,StringHandler.getFileExtension(destinationFile),destinationFile);
     }
     public static BufferedImage readImage(String imagePath) throws IOException{
-        return ImageIO.read(new File(imagePath));
+        return readImage(new File(imagePath));
+    }
+    public static BufferedImage readImage(File imageFile) throws IOException{
+        return ImageIO.read(imageFile);
     }
 
 }
