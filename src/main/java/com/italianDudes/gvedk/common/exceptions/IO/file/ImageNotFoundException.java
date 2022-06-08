@@ -1,4 +1,4 @@
-package com.italianDudes.gvedk.common.exceptions.fileIO;
+package com.italianDudes.gvedk.common.exceptions.IO.file;
 
 import java.io.FileNotFoundException;
 

@@ -1,4 +1,4 @@
-package com.italianDudes.gvedk.common.exceptions.socketIO;
+package com.italianDudes.gvedk.common.exceptions.IO.socket;
 
 import java.io.IOException;
 

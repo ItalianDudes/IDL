@@ -1,6 +1,6 @@
 package com.italianDudes.gvedk.common;
 
-import com.italianDudes.gvedk.common.exceptions.fileIO.ConfigFormatException;
+import com.italianDudes.gvedk.common.exceptions.IO.file.ConfigFormatException;
 
 import java.io.*;
 import java.util.ArrayList;

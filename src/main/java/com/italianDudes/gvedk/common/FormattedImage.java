@@ -1,6 +1,6 @@
 package com.italianDudes.gvedk.common;
 
-import com.italianDudes.gvedk.common.exceptions.socketIO.*;
+import com.italianDudes.gvedk.common.exceptions.IO.socket.*;
 
 import java.awt.image.BufferedImage;
 import java.io.Serializable;

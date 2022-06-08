@@ -5,7 +5,7 @@
 package com.italianDudes.gvedk.common;
 
 import com.italianDudes.gvedk.common.exceptions.NullPeerException;
-import com.italianDudes.gvedk.common.exceptions.socketIO.*;
+import com.italianDudes.gvedk.common.exceptions.IO.socket.*;
 
 import javax.imageio.ImageIO;
 import java.io.*;
