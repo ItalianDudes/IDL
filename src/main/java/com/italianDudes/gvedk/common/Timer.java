@@ -1,7 +1,9 @@
 package com.italianDudes.gvedk.common;
 
+import java.io.Serializable;
+
 @SuppressWarnings("unused")
-public class Timer {
+public class Timer implements Serializable {
 
     //Attributes
     private final Thread timerThread;

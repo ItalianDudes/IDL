@@ -4,8 +4,6 @@
  */
 package com.italianDudes.gvedk.common;
 
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
 
 @SuppressWarnings("unused")
@@ -27,6 +25,5 @@ public abstract class Sheet implements Serializable {
     //Abstract Methods
     public abstract Sheet readSheet(String path);
     public abstract void writeSheet(String path);
-    public abstract Sheet receiveSheet(Peer sourcePeer);
     public abstract void sendSheet(Peer destinationPeer);
 }

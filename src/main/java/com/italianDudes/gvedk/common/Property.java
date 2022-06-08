@@ -1,6 +1,8 @@
 package com.italianDudes.gvedk.common;
 
-public final class Property {
+import java.io.Serializable;
+
+public final class Property implements Serializable {
 
     //Attributes
     private final String key;

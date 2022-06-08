@@ -1,6 +1,8 @@
 package com.italianDudes.gvedk.common;
 
-public class InfoFlags {
+import java.io.Serializable;
+
+public class InfoFlags implements Serializable {
     //Attributes
     private final boolean isException;
     private final boolean isError;

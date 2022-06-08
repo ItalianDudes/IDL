@@ -1,6 +1,8 @@
 package com.italianDudes.gvedk.common;
 
-public class State {
+import java.io.Serializable;
+
+public class State implements Serializable {
 
     //Attributes
     private final int code;

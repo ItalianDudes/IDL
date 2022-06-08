@@ -1,11 +1,15 @@
 package com.italianDudes.gvedk.common;
 
-import java.awt.image.BufferedImage;
+import com.italianDudes.gvedk.common.exceptions.fileIO.ImageNotFoundException;
+import com.italianDudes.gvedk.common.exceptions.socketIO.*;
 
-public class FormattedImage {
+import java.awt.image.BufferedImage;
+import java.io.Serializable;
+
+public class FormattedImage implements Serializable {
 
     //Attributes
-    private BufferedImage image;
+    private transient BufferedImage image;
     private String formatName;
 
     //Constructors
@@ -15,6 +19,12 @@ public class FormattedImage {
     }
 
     //Methods
+    public void sendImage(Peer peer) throws OutputStreamWriteException, SpecializedStreamInstancingException, ImageNotFoundException, ValidatingStreamException {
+        Serializer.sendImage(peer,this);
+    }
+    public static FormattedImage receiveImage(Peer peer) throws ByteCountReadException, BytesMismatchException, SpecializedStreamInstancingException, CorruptedImageException, InputStreamReadException, ValidatingStreamException {
+        return Serializer.receiveImage(peer);
+    }
     public BufferedImage getImage() {
         return image;
     }
