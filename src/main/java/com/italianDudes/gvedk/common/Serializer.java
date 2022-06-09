@@ -323,7 +323,7 @@ public final class Serializer {
                 e.printStackTrace();
             throw new SpecializedStreamInstancingException(e);
         }
-        Serializer.sendString(peer,formattedImage.getFormatName());
+        Serializer.sendString(peer,formattedImage.getFormatName(),advancedLog);
         try {
             ImageIO.write(formattedImage.getImage(), formattedImage.getFormatName(), outStream);
             outStream.flush();
