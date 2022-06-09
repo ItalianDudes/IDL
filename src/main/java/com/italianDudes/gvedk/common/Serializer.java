@@ -304,7 +304,7 @@ public final class Serializer {
         }
     }
     private static void writeImage(Peer peer, File img, boolean advancedLog) throws IOException {
-        writeImage(peer, new FormattedImage(ImageIO.read(img),StringHandler.getFileExtension(img)),advancedLog);
+        writeImage(peer, new FormattedImage(ImageIO.read(img),FileHandler.getFileExtension(img)),advancedLog);
     }
     private static void writeImage(Peer peer, FormattedImage formattedImage, boolean advancedLog) throws ValidatingStreamException, SpecializedStreamInstancingException, OutputStreamWriteException {
         try {
@@ -325,6 +325,7 @@ public final class Serializer {
         Serializer.sendString(peer,formattedImage.getFormatName());
         try {
             ImageIO.write(formattedImage.getImage(), formattedImage.getFormatName(), outStream);
+            outStream.flush();
         }catch (IOException e){
             throw  new OutputStreamWriteException(e);
         }

@@ -18,7 +18,7 @@ public final class ImageHandler {
 
     //Methods
     public static String getImageExtension(String imagePath){
-        return StringHandler.getFileExtension(imagePath);
+        return FileHandler.getFileExtension(imagePath);
     }
     @Deprecated
     public static void sendImage(OutputStream out, String imagePath, final int DIM_BUFFER) throws IOException {
@@ -83,7 +83,7 @@ public final class ImageHandler {
         writeImage(new File(destinationPath), bufferedImage);
     }
     public static void writeImage(File destinationFile, BufferedImage bufferedImage) throws IOException{
-        ImageIO.write(bufferedImage,StringHandler.getFileExtension(destinationFile),destinationFile);
+        ImageIO.write(bufferedImage,FileHandler.getFileExtension(destinationFile),destinationFile);
     }
     public static BufferedImage readImage(String imagePath) throws IOException{
         return readImage(new File(imagePath));

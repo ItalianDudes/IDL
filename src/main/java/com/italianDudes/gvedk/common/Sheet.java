@@ -21,9 +21,4 @@ public abstract class Sheet implements Serializable {
     public Credential getUserCredential(){
         return userCredential;
     }
-
-    //Abstract Methods
-    public abstract Sheet readSheet(String path);
-    public abstract void writeSheet(String path);
-    public abstract void sendSheet(Peer destinationPeer);
 }
