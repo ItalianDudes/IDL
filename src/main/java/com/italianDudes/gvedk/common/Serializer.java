@@ -268,6 +268,7 @@ public final class Serializer {
         byte[] byteStr = str.getBytes();
         try {
             outStream.writeInt(byteStr.length);
+            outStream.flush();
             outStream.write(byteStr);
             outStream.flush();
         }catch (IOException e){
