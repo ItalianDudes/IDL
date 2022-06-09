@@ -8,7 +8,9 @@ import com.italianDudes.gvedk.common.exceptions.NullPeerException;
 import com.italianDudes.gvedk.common.exceptions.IO.socket.*;
 
 import javax.imageio.ImageIO;
+import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.io.*;
+import java.util.Base64;
 
 @SuppressWarnings("unused")
 public final class Serializer {
@@ -315,21 +317,22 @@ public final class Serializer {
                 e.printStackTrace();
             throw e;
         }
-        DataOutputStream outStream;
-        try {
-            outStream = new DataOutputStream(peer.getPeerSocket().getOutputStream());
-        }catch (IOException e){
-            if(advancedLog)
-                e.printStackTrace();
-            throw new SpecializedStreamInstancingException(e);
-        }
         Serializer.sendString(peer,formattedImage.getFormatName(),advancedLog);
+
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+
+        MemoryCacheImageOutputStream imageStream = new MemoryCacheImageOutputStream(byteStream);
+
         try {
-            ImageIO.write(formattedImage.getImage(), formattedImage.getFormatName(), outStream);
-            outStream.flush();
-        }catch (IOException e){
-            throw  new OutputStreamWriteException(e);
+            ImageIO.write(formattedImage.getImage(),formattedImage.getFormatName(),imageStream);
+        } catch (IOException exception) {
+            if(advancedLog)
+                exception.printStackTrace();
+            throw new OutputStreamWriteException(exception);
         }
+
+        Serializer.sendString(peer,Base64.getEncoder().encodeToString(byteStream.toByteArray()));
+
     }
 
     //Private Definitions: Input
@@ -537,14 +540,12 @@ public final class Serializer {
             throw e;
         }
         String formatName = Serializer.receiveString(peer);
-        DataInputStream inStream;
-        try {
-            inStream = new DataInputStream(peer.getPeerSocket().getInputStream());
-        }catch (IOException e){
-            if(advancedLog)
-                e.printStackTrace();
-            throw new SpecializedStreamInstancingException(e);
-        }
+
+        String base64image = Serializer.receiveString(peer);
+
+        byte[] imageByte = Base64.getDecoder().decode(base64image);
+
+        ByteArrayInputStream inStream = new ByteArrayInputStream(imageByte);
 
         try {
             return new FormattedImage(ImageIO.read(inStream),formatName);
