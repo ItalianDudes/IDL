@@ -3,12 +3,11 @@ package com.italianDudes.gvedk.common;
 import com.italianDudes.gvedk.GVEDK;
 import org.apache.commons.io.FileUtils;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -17,7 +16,6 @@ import java.util.concurrent.TimeUnit;
 public final class Logger {
 
     //Attributes
-    private static boolean isLoggerInitialized = false;
     private static final File latestLogFilePointer = new File(GVEDK.Defs.LOG_LATEST_FILE);
     private static BufferedWriter logger = null;
     private static ExecutorService queue = null;
@@ -64,24 +62,23 @@ public final class Logger {
 
     //Methods
     public static boolean init() throws IOException {
-        if(!isLoggerInitialized) {
-            File logDirectory = new File(GVEDK.Defs.LOG_DIR);
-            if (!logDirectory.exists() || !logDirectory.isDirectory()) {
-                if (!logDirectory.mkdir()) {
-                    System.err.println("[ERROR][FATAL][" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "] Can't create log directory!");
-                    return false;
-                }
-            }
-            queue = Executors.newSingleThreadExecutor();
-            isLoggerInitialized = createLogFile();
-            return isLoggerInitialized;
-        }else {
-            Logger.log("Can't initialize logger: logger is already initialized!");
-            return false;
+        try {
+            backupOldLog();
+        }catch (IOException e){
+            System.err.println("Error during old log file copy");
         }
+        File logDirectory = new File(GVEDK.Defs.LOG_DIR);
+        if(!logDirectory.exists() || !logDirectory.isDirectory()) {
+            if (!logDirectory.mkdir()) {
+                System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Can't create log directory!");
+                return false;
+            }
+        }
+        queue = Executors.newSingleThreadExecutor();
+        return createLogFile();
     }
     public static void log(String message){
-            log(message,new InfoFlags());
+        log(message,new InfoFlags());
     }
     public static void log(Throwable throwable, InfoFlags flags){
         log(StringHandler.getStackTrace(throwable),flags);
@@ -93,48 +90,57 @@ public final class Logger {
         log("["+Thread.currentThread().getStackTrace()[2]+"] "+message);
     }
     public static void log(String message, InfoFlags flags){
-        if(isLoggerInitialized)
+        if(!queue.isShutdown())
             queue.submit(new LogWriter(message, flags));
-        else
-            System.err.println("[EXCEPTION]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Can't use logger: logger isn't initialized yet!");
     }
-    private static boolean save() throws IOException{
+    private static void backupOldLog() throws IOException{
+        File latestLogFile = new File(GVEDK.Defs.LOG_LATEST_FILE);
+        if(latestLogFile.exists() && latestLogFile.isFile()){
+
+            String date = null;
+
+            Scanner inFile = new Scanner(latestLogFile);
+
+            if(inFile.hasNext()){
+                date = inFile.nextLine();
+            }
+
+            inFile.close();
+
+            File newLogDestination = new File(GVEDK.Defs.LOG_DIR+date+".log");
+            FileUtils.copyFile(latestLogFilePointer,newLogDestination);
+
+        }
+    }
+    public static void close() {
+
+        new Thread(() -> {
+            boolean result = false;
+            queue.shutdown();
+            try {
+                result = queue.awaitTermination(60, TimeUnit.SECONDS);
+                new CountDownLatch(1).countDown();
+            }catch (InterruptedException e){
+                e.printStackTrace();
+                System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] An error has occurred during queue termination");
+            }
+            if(!result) {
+                System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Time elapsed before queue termination");
+            }
+            try{
+                logger.close();
+            }catch (IOException e){
+                System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Can't close log file!");
+            }
+        }).start();
+    }
+    private static boolean createLogFile() throws IOException {
         String date = startTime.format(DateTimeFormatter.BASIC_ISO_DATE)+"_"+startTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
         date = date.replaceAll(":","-");
         date = date.split("\\.")[0];
-        File newLogDestination = new File(GVEDK.Defs.LOG_DIR+date+".log");
-        FileUtils.copyFile(latestLogFilePointer,newLogDestination);
-        return true;
-    }
-    public static boolean close() throws IOException {
-
-        if(isLoggerInitialized) {
-            boolean result;
-            queue.shutdown();
-            try {
-                result = queue.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-            } catch (InterruptedException e) {
-                System.err.println("[ERROR][FATAL][" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "] An error has occurred during queue termination");
-                result = false;
-            }
-            if (!result) {
-                System.err.println("[ERROR][FATAL][" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "] An error has occurred during queue termination");
-            }
-            try {
-                logger.close();
-            } catch (IOException e) {
-                System.err.println("[ERROR][FATAL][" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "] Can't close log file!");
-                throw e;
-            }
-            return save();
-        }else{
-            System.err.println("[EXCEPTION]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Can't close logger: logger isn't initialized yet!");
-            return false;
-        }
-    }
-    private static boolean createLogFile() throws IOException {
         try {
             logger = new BufferedWriter(new FileWriter(latestLogFilePointer));
+            logger.append(date).append("\n");
         }catch (IOException e){
             System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Can't initialize logger!");
             throw e;
@@ -154,8 +160,5 @@ public final class Logger {
             System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Can't flush log file!");
             throw e;
         }
-    }
-    public static boolean isIsLoggerInitialized(){
-        return isLoggerInitialized;
     }
 }
