@@ -42,10 +42,10 @@ public class FormattedImage implements Serializable {
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {
 
         DataOutputStream outStream = new DataOutputStream(out);
-        byte[] extBytes = formatName.getBytes();
-        outStream.writeInt(extBytes.length);
+        byte[] formatBytes = formatName.getBytes();
+        outStream.writeInt(formatBytes.length);
         outStream.flush();
-        outStream.write(extBytes);
+        outStream.write(formatBytes);
         outStream.flush();
 
         ByteArrayOutputStream imgByteStream = new ByteArrayOutputStream();
