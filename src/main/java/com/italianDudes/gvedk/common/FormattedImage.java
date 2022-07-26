@@ -2,14 +2,16 @@ package com.italianDudes.gvedk.common;
 
 import com.italianDudes.gvedk.common.exceptions.IO.socket.*;
 
+import javax.imageio.ImageIO;
+import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.awt.image.BufferedImage;
-import java.io.Serializable;
+import java.io.*;
 
 @SuppressWarnings("unused")
 public class FormattedImage implements Serializable {
 
     //Attributes
-    private transient BufferedImage image;
+    private BufferedImage image;
     private String formatName;
 
     //Constructors
@@ -36,6 +38,43 @@ public class FormattedImage implements Serializable {
     }
     public void setFormatName(String formatName) {
         this.formatName = formatName;
+    }
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+
+        DataOutputStream outStream = new DataOutputStream(out);
+        byte[] extBytes = formatName.getBytes();
+        outStream.writeInt(extBytes.length);
+        outStream.flush();
+        outStream.write(extBytes);
+        outStream.flush();
+
+        ByteArrayOutputStream imgByteStream = new ByteArrayOutputStream();
+        MemoryCacheImageOutputStream imageStream = new MemoryCacheImageOutputStream(imgByteStream);
+        ImageIO.write(image,formatName,imageStream);
+        outStream.writeInt(imgByteStream.toByteArray().length);
+        outStream.flush();
+        outStream.write(imgByteStream.toByteArray());
+        outStream.flush();
+    }
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+
+        DataInputStream inStream = new DataInputStream(in);
+
+        int formatLength = inStream.readInt();
+        byte[] formatBytes = new byte[formatLength];
+        inStream.readFully(formatBytes,0,formatLength);
+        formatName = new String(formatBytes);
+
+        int imgLength = inStream.readInt();
+        byte[] imgBytes = new byte[imgLength];
+        inStream.readFully(imgBytes,0,imgLength);
+
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(imgBytes);
+        image = ImageIO.read(byteArrayInputStream);
+
+    }
+    private void readObjectNoData() throws ObjectStreamException {
+        throw new InvalidObjectException("Stream data required");
     }
     @Override
     public boolean equals(Object obj) {
