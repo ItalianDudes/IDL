@@ -64,6 +64,9 @@ public final class Logger {
     }
 
     //Methods
+    public static boolean isInitialized(){
+        return logger != null;
+    }
     public static boolean init() throws IOException {
         try {
             backupOldLog();

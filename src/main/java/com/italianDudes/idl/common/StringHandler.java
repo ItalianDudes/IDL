@@ -132,7 +132,11 @@ public final class StringHandler {
                         composition.add(buffer);
                     } while (!comandoAsset[index].contains("\""));
                 }catch (ArrayIndexOutOfBoundsException outOfBoundsException){
-                    Logger.log("Error during splitting string: missing \"", new InfoFlags(true, false));
+                    if(Logger.isInitialized()) {
+                        Logger.log("Error during splitting string: missing \"", new InfoFlags(true, false));
+                    }else{
+                        System.err.println("Error during splitting string: missing \"");
+                    }
                     return null;
                 }
                 StringBuilder stringBuilder = new StringBuilder();

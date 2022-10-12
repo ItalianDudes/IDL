@@ -131,7 +131,11 @@ public final class Serializer {
             checkOutputStreamValidity(peer, advancedLog);
         }catch (NullPeerException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw e;
         }
         DataOutputStream outStream;
@@ -139,7 +143,11 @@ public final class Serializer {
             outStream = new DataOutputStream(peer.getPeerSocket().getOutputStream());
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new SpecializedStreamInstancingException(e);
         }
         try{
@@ -147,7 +155,11 @@ public final class Serializer {
             outStream.flush();
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new OutputStreamWriteException(e);
         }
     }
@@ -156,7 +168,11 @@ public final class Serializer {
             checkOutputStreamValidity(peer, advancedLog);
         }catch (NullPeerException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw e;
         }
         DataOutputStream outStream;
@@ -164,7 +180,11 @@ public final class Serializer {
             outStream = new DataOutputStream(peer.getPeerSocket().getOutputStream());
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new SpecializedStreamInstancingException(e);
         }
         try{
@@ -172,7 +192,11 @@ public final class Serializer {
             outStream.flush();
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new OutputStreamWriteException(e);
         }
     }
@@ -181,7 +205,11 @@ public final class Serializer {
             checkOutputStreamValidity(peer, advancedLog);
         }catch (NullPeerException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw e;
         }
         DataOutputStream outStream;
@@ -189,7 +217,11 @@ public final class Serializer {
             outStream = new DataOutputStream(peer.getPeerSocket().getOutputStream());
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new SpecializedStreamInstancingException(e);
         }
         try{
@@ -197,7 +229,11 @@ public final class Serializer {
             outStream.flush();
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new OutputStreamWriteException(e);
         }
     }
@@ -206,7 +242,11 @@ public final class Serializer {
             checkOutputStreamValidity(peer, advancedLog);
         }catch (NullPeerException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw e;
         }
         DataOutputStream outStream;
@@ -214,7 +254,11 @@ public final class Serializer {
             outStream = new DataOutputStream(peer.getPeerSocket().getOutputStream());
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new SpecializedStreamInstancingException(e);
         }
         try{
@@ -222,7 +266,11 @@ public final class Serializer {
             outStream.flush();
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new OutputStreamWriteException(e);
         }
     }
@@ -231,7 +279,11 @@ public final class Serializer {
             checkOutputStreamValidity(peer, advancedLog);
         }catch (NullPeerException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw e;
         }
         DataOutputStream outStream;
@@ -239,7 +291,11 @@ public final class Serializer {
             outStream = new DataOutputStream(peer.getPeerSocket().getOutputStream());
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new SpecializedStreamInstancingException(e);
         }
         try{
@@ -247,7 +303,11 @@ public final class Serializer {
             outStream.flush();
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new OutputStreamWriteException(e);
         }
     }
@@ -256,7 +316,11 @@ public final class Serializer {
             checkOutputStreamValidity(peer, advancedLog);
         }catch (NullPeerException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw e;
         }
         DataOutputStream outStream;
@@ -264,7 +328,11 @@ public final class Serializer {
             outStream = new DataOutputStream(peer.getPeerSocket().getOutputStream());
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new SpecializedStreamInstancingException(e);
         }
         byte[] byteStr = str.getBytes();
@@ -275,7 +343,11 @@ public final class Serializer {
             outStream.flush();
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new OutputStreamWriteException(e);
         }
     }
@@ -286,7 +358,11 @@ public final class Serializer {
             checkOutputStreamValidity(peer, advancedLog);
         }catch (NullPeerException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw e;
         }
         ObjectOutputStream outStream;
@@ -294,7 +370,11 @@ public final class Serializer {
             outStream = new ObjectOutputStream(peer.getPeerSocket().getOutputStream());
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new SpecializedStreamInstancingException(e);
         }
         try{
@@ -302,7 +382,11 @@ public final class Serializer {
             outStream.flush();
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new OutputStreamWriteException(e);
         }
     }
@@ -314,7 +398,11 @@ public final class Serializer {
             checkOutputStreamValidity(peer, advancedLog);
         }catch (NullPeerException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw e;
         }
         Serializer.sendString(peer,formattedImage.getFormatName(),advancedLog);
@@ -327,7 +415,11 @@ public final class Serializer {
             ImageIO.write(formattedImage.getImage(),formattedImage.getFormatName(),imageStream);
         } catch (IOException exception) {
             if(advancedLog)
-                exception.printStackTrace();
+                if(Logger.isInitialized()) {
+                    Logger.log(exception);
+                }else{
+                    exception.printStackTrace();
+                }
             throw new OutputStreamWriteException(exception);
         }
 
@@ -341,7 +433,11 @@ public final class Serializer {
             checkInputStreamValidity(peer, advancedLog);
         }catch (NullPeerException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw e;
         }
         DataInputStream inStream;
@@ -349,7 +445,11 @@ public final class Serializer {
             inStream = new DataInputStream(peer.getPeerSocket().getInputStream());
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new SpecializedStreamInstancingException(e);
         }
         int integerNumber;
@@ -357,7 +457,11 @@ public final class Serializer {
             integerNumber = inStream.readInt();
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new InputStreamReadException(e);
         }
         return integerNumber;
@@ -367,7 +471,11 @@ public final class Serializer {
             checkInputStreamValidity(peer, advancedLog);
         }catch (NullPeerException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw e;
         }
         DataInputStream inStream;
@@ -375,7 +483,11 @@ public final class Serializer {
             inStream = new DataInputStream(peer.getPeerSocket().getInputStream());
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new SpecializedStreamInstancingException(e);
         }
         long longNumber;
@@ -383,7 +495,11 @@ public final class Serializer {
             longNumber = inStream.readLong();
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new InputStreamReadException(e);
         }
         return longNumber;
@@ -393,7 +509,11 @@ public final class Serializer {
             checkInputStreamValidity(peer, advancedLog);
         }catch (NullPeerException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw e;
         }
         DataInputStream inStream;
@@ -401,7 +521,11 @@ public final class Serializer {
             inStream = new DataInputStream(peer.getPeerSocket().getInputStream());
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new SpecializedStreamInstancingException(e);
         }
         float floatNumber;
@@ -409,7 +533,11 @@ public final class Serializer {
             floatNumber = inStream.readFloat();
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new InputStreamReadException(e);
         }
         return floatNumber;
@@ -419,7 +547,11 @@ public final class Serializer {
             checkInputStreamValidity(peer, advancedLog);
         }catch (NullPeerException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw e;
         }
         DataInputStream inStream;
@@ -427,7 +559,11 @@ public final class Serializer {
             inStream = new DataInputStream(peer.getPeerSocket().getInputStream());
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new SpecializedStreamInstancingException(e);
         }
         double doubleNumber;
@@ -435,7 +571,11 @@ public final class Serializer {
             doubleNumber = inStream.readDouble();
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new InputStreamReadException(e);
         }
         return doubleNumber;
@@ -445,7 +585,11 @@ public final class Serializer {
             checkInputStreamValidity(peer, advancedLog);
         }catch (NullPeerException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw e;
         }
         DataInputStream inStream;
@@ -453,7 +597,11 @@ public final class Serializer {
             inStream = new DataInputStream(peer.getPeerSocket().getInputStream());
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new SpecializedStreamInstancingException(e);
         }
         boolean state;
@@ -461,7 +609,11 @@ public final class Serializer {
             state = inStream.readBoolean();
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new InputStreamReadException(e);
         }
         return state;
@@ -471,7 +623,11 @@ public final class Serializer {
             checkInputStreamValidity(peer, advancedLog);
         }catch (NullPeerException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw e;
         }
         DataInputStream inStream;
@@ -479,7 +635,11 @@ public final class Serializer {
             inStream = new DataInputStream(peer.getPeerSocket().getInputStream());
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new SpecializedStreamInstancingException(e);
         }
         int length;
@@ -496,7 +656,11 @@ public final class Serializer {
             }
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new InputStreamReadException(e);
         }
     }
@@ -505,7 +669,11 @@ public final class Serializer {
             checkInputStreamValidity(peer, advancedLog);
         }catch (NullPeerException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw e;
         }
         ObjectInputStream inStream;
@@ -513,7 +681,11 @@ public final class Serializer {
             inStream = new ObjectInputStream(peer.getPeerSocket().getInputStream());
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new SpecializedStreamInstancingException(e);
         }
         Object obj;
@@ -521,11 +693,19 @@ public final class Serializer {
             obj = inStream.readObject();
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new InputStreamReadException(e);
         } catch (ClassNotFoundException e) {
             if (advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw e;
         }
         return obj;
@@ -536,7 +716,11 @@ public final class Serializer {
             checkInputStreamValidity(peer, advancedLog);
         }catch (NullPeerException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw e;
         }
         String formatName = Serializer.receiveString(peer);
@@ -563,7 +747,11 @@ public final class Serializer {
             peer.getPeerSocket().getOutputStream();
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new ValidatingStreamException(e);
         }
     }
@@ -574,7 +762,11 @@ public final class Serializer {
             peer.getPeerSocket().getInputStream();
         }catch (IOException e){
             if(advancedLog)
-                Logger.log(e);
+                if(Logger.isInitialized()) {
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
             throw new ValidatingStreamException(e);
         }
     }

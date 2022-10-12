@@ -9,4 +9,5 @@ public class NullPeerException extends NullPointerException{
     public NullPeerException(){
         super("The peer is null.");
     }
+
 }
