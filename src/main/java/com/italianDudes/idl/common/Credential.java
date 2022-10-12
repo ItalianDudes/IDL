@@ -50,13 +50,21 @@ public class Credential implements Serializable {
     public String getPassword(){
         return password;
     }
-
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Credential))
-            return false;
-        Credential credential = (Credential) o;
-        return credential.username.equals(this.username) && this.password.equals(credential.password);
+        if (this == o) return true;
+        if (!(o instanceof Credential)) return false;
+
+        Credential that = (Credential) o;
+
+        if (!getUsername().equals(that.getUsername())) return false;
+        return getPassword().equals(that.getPassword());
+    }
+    @Override
+    public int hashCode() {
+        int result = getUsername().hashCode();
+        result = 31 * result + getPassword().hashCode();
+        return result;
     }
     @Override
     public String toString(){

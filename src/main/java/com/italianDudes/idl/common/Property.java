@@ -22,12 +22,22 @@ public final class Property implements Serializable {
         return value;
     }
     @Override
-    public boolean equals(Object obj) {
-        if(!(obj instanceof Property))
-            return false;
-        Property property = (Property) obj;
-        return property.key.equals(this.key) && property.value.equals(this.value);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Property)) return false;
+
+        Property property = (Property) o;
+
+        if (!getKey().equals(property.getKey())) return false;
+        return getValue().equals(property.getValue());
     }
+    @Override
+    public int hashCode() {
+        int result = getKey().hashCode();
+        result = 31 * result + getValue().hashCode();
+        return result;
+    }
+
     @Override
     public String toString() {
         if(key.equals("#"))

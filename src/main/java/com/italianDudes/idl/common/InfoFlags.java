@@ -67,11 +67,24 @@ public class InfoFlags implements Serializable {
         return errStream;
     }
     @Override
-    public boolean equals(Object obj) {
-        if(!(obj instanceof InfoFlags))
-            return false;
-        InfoFlags flags = (InfoFlags) obj;
-        return flags.isError == this.isError && flags.isException == this.isException && flags.isFatal == this.isFatal && flags.errStream == this.errStream;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof InfoFlags)) return false;
+
+        InfoFlags infoFlags = (InfoFlags) o;
+
+        if (isException() != infoFlags.isException()) return false;
+        if (isError() != infoFlags.isError()) return false;
+        if (isFatal() != infoFlags.isFatal()) return false;
+        return isErrStream() == infoFlags.isErrStream();
+    }
+    @Override
+    public int hashCode() {
+        int result = (isException() ? 1 : 0);
+        result = 31 * result + (isError() ? 1 : 0);
+        result = 31 * result + (isFatal() ? 1 : 0);
+        result = 31 * result + (isErrStream() ? 1 : 0);
+        return result;
     }
     @Override
     public String toString() {

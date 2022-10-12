@@ -51,12 +51,20 @@ public class Peer implements Serializable {
     }
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof Peer))
-            return false;
-        Peer client = (Peer) o;
-        return client.getCredential().equals(this.getCredential()) && client.peerSocket.equals(this.peerSocket);
-    }
+        if (this == o) return true;
+        if (!(o instanceof Peer)) return false;
 
+        Peer peer = (Peer) o;
+
+        if (!getPeerSocket().equals(peer.getPeerSocket())) return false;
+        return getCredential().equals(peer.getCredential());
+    }
+    @Override
+    public int hashCode() {
+        int result = getPeerSocket().hashCode();
+        result = 31 * result + getCredential().hashCode();
+        return result;
+    }
     @Override
     public String toString(){
         String username = credential!=null?credential.getUsername():null;

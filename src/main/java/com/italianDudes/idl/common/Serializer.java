@@ -4,8 +4,8 @@
  */
 package com.italianDudes.idl.common;
 
-import com.italianDudes.idl.common.exceptions.NullPeerException;
 import com.italianDudes.idl.common.exceptions.IO.socket.*;
+import com.italianDudes.idl.common.exceptions.NullPeerException;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.MemoryCacheImageOutputStream;

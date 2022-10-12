@@ -77,11 +77,20 @@ public class FormattedImage implements Serializable {
         throw new InvalidObjectException("Stream data required");
     }
     @Override
-    public boolean equals(Object obj) {
-        if(!(obj instanceof FormattedImage))
-            return false;
-        FormattedImage formattedImage = (FormattedImage) obj;
-        return formattedImage.image.equals(this.image) && formattedImage.formatName.equals(this.formatName);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FormattedImage)) return false;
+
+        FormattedImage that = (FormattedImage) o;
+
+        if (!getImage().equals(that.getImage())) return false;
+        return getFormatName().equals(that.getFormatName());
+    }
+    @Override
+    public int hashCode() {
+        int result = getImage().hashCode();
+        result = 31 * result + getFormatName().hashCode();
+        return result;
     }
     @Override
     public String toString() {

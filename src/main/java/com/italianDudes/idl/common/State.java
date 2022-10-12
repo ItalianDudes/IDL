@@ -24,4 +24,24 @@ public class State implements Serializable {
     public String getMessage() {
         return message;
     }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof State)) return false;
+
+        State state = (State) o;
+
+        if (getCode() != state.getCode()) return false;
+        return getMessage().equals(state.getMessage());
+    }
+    @Override
+    public int hashCode() {
+        int result = getCode();
+        result = 31 * result + getMessage().hashCode();
+        return result;
+    }
+    @Override
+    public String toString(){
+        return code+" - "+message;
+    }
 }
