@@ -151,10 +151,6 @@ public final class StringHandler {
             }
             index++;
         }
-        for (String s : commandPipeline) {
-            System.out.print(s + " ");
-        }
-        System.out.println();
         return commandPipeline.toArray(new String[0]);
     }
 
