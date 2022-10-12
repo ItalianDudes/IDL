@@ -1,0 +1,24 @@
+/*
+ *  Copyright (C) 2022 ItalianDudes
+ *  Software distributed under the GPLv3 license
+ */
+package com.italianDudes.idl.common;
+
+import java.io.Serializable;
+
+@SuppressWarnings("unused")
+public abstract class Sheet implements Serializable {
+
+    //Attributes
+    private final Credential userCredential;
+
+    //Constructors
+    public Sheet(Credential userCredential){
+        this.userCredential = userCredential;
+    }
+
+    //Methods
+    public Credential getUserCredential(){
+        return userCredential;
+    }
+}
