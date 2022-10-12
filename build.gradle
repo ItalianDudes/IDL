@@ -23,7 +23,7 @@ jar {
     archiveFileName = getRootDir().getName().toLowerCase()+"-"+archiveVersion.get()+".jar"
 }
 
-task buildGVEDK {
+task buildIDL {
     dependsOn jar
     group = "Build"
     description = "Build and assemble the jar"
