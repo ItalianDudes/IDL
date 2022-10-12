@@ -1,2 +1,2 @@
 # GVEDK
-Game Visualizer Extensions Development Kit
+Italian Dudes Libraries for integrated develop.
