@@ -8,7 +8,6 @@ version '1.0R'
 
 repositories {
     mavenCentral()
-    mavenLocal()
 }
 
 dependencies {
