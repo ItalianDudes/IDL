@@ -25,6 +25,7 @@ jar {
 shadowJar {
     manifest {
         attributes "Version" : archiveVersion.get()
+        attributes "Automatic-Module-Name" : "it.italiandudes.idl"
     }
     archiveFileName = getRootDir().getName()+"-"+archiveVersion.get()+".jar"
 }
