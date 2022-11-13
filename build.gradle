@@ -19,6 +19,7 @@ dependencies {
 jar {
     manifest {
         attributes "Version" : archiveVersion.get()
+        attributes "Automatic-Module-Name" : "it.italiandudes.idl"
     }
     archiveFileName = getRootDir().getName().toLowerCase()+"-"+archiveVersion.get()+".jar"
 }
