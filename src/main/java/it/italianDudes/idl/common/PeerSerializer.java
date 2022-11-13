@@ -2,10 +2,10 @@
  *  Copyright (C) 2022 ItalianDudes
  *  Software distributed under the GPLv3 license
  */
-package it.italianDudes.idl.common;
+package it.italiandudes.idl.common;
 
-import it.italianDudes.idl.common.exceptions.IO.socket.*;
-import it.italianDudes.idl.common.exceptions.NullPeerException;
+import it.italiandudes.idl.common.exceptions.IO.socket.*;
+import it.italiandudes.idl.common.exceptions.NullPeerException;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
@@ -13,9 +13,9 @@ import java.io.*;
 import java.util.Base64;
 
 @SuppressWarnings("unused")
-public final class Serializer {
+public final class PeerSerializer {
 
-    private Serializer(){
+    private PeerSerializer(){
         throw new UnsupportedOperationException("Can't instantiate this class!");
     }
 
@@ -62,17 +62,17 @@ public final class Serializer {
     public static void sendObject(Peer peer, Object obj, boolean advancedLog) throws OutputStreamWriteException, SpecializedStreamInstancingException, ValidatingStreamException, NotSerializableException {
         writeObject(peer,obj,advancedLog);
     }
-    public static void sendImage(Peer peer, File img) throws IOException {
-        writeImage(peer,img,false);
+    public static void sendFormattedImage(Peer peer, File img) throws IOException {
+        writeFormattedImage(peer,new FormattedImage(ImageIO.read(img),FileHandler.getFileExtension(img)),false);
     }
-    public static void sendImage(Peer peer, File img, boolean advancedLog) throws IOException {
-        writeImage(peer,img,advancedLog);
+    public static void sendFormattedImage(Peer peer, File img, boolean advancedLog) throws IOException {
+        writeFormattedImage(peer, new FormattedImage(ImageIO.read(img),FileHandler.getFileExtension(img)),advancedLog);
     }
-    public static void sendImage(Peer peer, FormattedImage formattedImage) throws OutputStreamWriteException, SpecializedStreamInstancingException, ValidatingStreamException {
-        writeImage(peer,formattedImage,false);
+    public static void sendFormattedImage(Peer peer, FormattedImage formattedImage) throws OutputStreamWriteException, SpecializedStreamInstancingException, ValidatingStreamException {
+        writeFormattedImage(peer,formattedImage,false);
     }
-    public static void sendImage(Peer peer, FormattedImage formattedImage, boolean advancedLog) throws OutputStreamWriteException, SpecializedStreamInstancingException, ValidatingStreamException {
-        writeImage(peer,formattedImage,advancedLog);
+    public static void sendFormattedImage(Peer peer, FormattedImage formattedImage, boolean advancedLog) throws OutputStreamWriteException, SpecializedStreamInstancingException, ValidatingStreamException {
+        writeFormattedImage(peer,formattedImage,advancedLog);
     }
 
     //Public Definitions (Invokers): Receiver
@@ -118,11 +118,11 @@ public final class Serializer {
     public static Object receiveObject(Peer peer, boolean advancedLog) throws SpecializedStreamInstancingException, InputStreamReadException, ValidatingStreamException, ClassNotFoundException {
         return readObject(peer,advancedLog);
     }
-    public static FormattedImage receiveImage(Peer peer) throws SpecializedStreamInstancingException, CorruptedImageException, InputStreamReadException, ValidatingStreamException {
-        return readImage(peer,false);
+    public static FormattedImage receiveFormattedImage(Peer peer) throws SpecializedStreamInstancingException, CorruptedImageException, InputStreamReadException, ValidatingStreamException {
+        return readFormattedImage(peer,false);
     }
-    public static FormattedImage receiveImage(Peer peer, boolean advancedLog) throws SpecializedStreamInstancingException, CorruptedImageException, InputStreamReadException, ValidatingStreamException {
-        return readImage(peer,advancedLog);
+    public static FormattedImage receiveFormattedImage(Peer peer, boolean advancedLog) throws SpecializedStreamInstancingException, CorruptedImageException, InputStreamReadException, ValidatingStreamException {
+        return readFormattedImage(peer,advancedLog);
     }
 
     //Private Definitions: Output
@@ -390,10 +390,7 @@ public final class Serializer {
             throw new OutputStreamWriteException(e);
         }
     }
-    private static void writeImage(Peer peer, File img, boolean advancedLog) throws IOException {
-        writeImage(peer, new FormattedImage(ImageIO.read(img),FileHandler.getFileExtension(img)),advancedLog);
-    }
-    private static void writeImage(Peer peer, FormattedImage formattedImage, boolean advancedLog) throws ValidatingStreamException, SpecializedStreamInstancingException, OutputStreamWriteException {
+    private static void writeFormattedImage(Peer peer, FormattedImage formattedImage, boolean advancedLog) throws ValidatingStreamException, SpecializedStreamInstancingException, OutputStreamWriteException {
         try {
             checkOutputStreamValidity(peer, advancedLog);
         }catch (NullPeerException e){
@@ -405,7 +402,7 @@ public final class Serializer {
                 }
             throw e;
         }
-        Serializer.sendString(peer,formattedImage.getFormatName(),advancedLog);
+        PeerSerializer.sendString(peer,formattedImage.getFormatName(),advancedLog);
 
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
@@ -423,7 +420,7 @@ public final class Serializer {
             throw new OutputStreamWriteException(exception);
         }
 
-        Serializer.sendString(peer,Base64.getEncoder().encodeToString(byteStream.toByteArray()));
+        PeerSerializer.sendString(peer,Base64.getEncoder().encodeToString(byteStream.toByteArray()));
 
     }
 
@@ -710,8 +707,7 @@ public final class Serializer {
         }
         return obj;
     }
-
-    private static FormattedImage readImage(Peer peer, boolean advancedLog) throws ValidatingStreamException, SpecializedStreamInstancingException, InputStreamReadException, CorruptedImageException {
+    private static FormattedImage readFormattedImage(Peer peer, boolean advancedLog) throws ValidatingStreamException, SpecializedStreamInstancingException, InputStreamReadException, CorruptedImageException {
         try {
             checkInputStreamValidity(peer, advancedLog);
         }catch (NullPeerException e){
@@ -723,9 +719,9 @@ public final class Serializer {
                 }
             throw e;
         }
-        String formatName = Serializer.receiveString(peer);
+        String formatName = PeerSerializer.receiveString(peer);
 
-        String base64image = Serializer.receiveString(peer);
+        String base64image = PeerSerializer.receiveString(peer);
 
         byte[] imageByte = Base64.getDecoder().decode(base64image);
 

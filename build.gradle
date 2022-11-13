@@ -3,7 +3,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
-group 'it.italianDudes'
+group 'it.italiandudes'
 version '1.0R'
 
 repositories {

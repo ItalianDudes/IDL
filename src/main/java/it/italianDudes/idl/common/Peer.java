@@ -2,9 +2,9 @@
  *  Copyright (C) 2022 ItalianDudes
  *  Software distributed under the GPLv3 license
  */
-package it.italianDudes.idl.common;
+package it.italiandudes.idl.common;
 
-import it.italianDudes.idl.IDL;
+import it.italiandudes.idl.IDL;
 
 import java.io.IOException;
 import java.io.Serializable;

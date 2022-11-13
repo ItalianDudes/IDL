@@ -1,6 +1,10 @@
-package it.italianDudes.idl.common;
+/*
+ *  Copyright (C) 2022 ItalianDudes
+ *  Software distributed under the GPLv3 license
+ */
+package it.italiandudes.idl.common;
 
-import it.italianDudes.idl.IDL;
+import it.italiandudes.idl.IDL;
 import org.apache.commons.io.FileUtils;
 
 import java.io.BufferedWriter;

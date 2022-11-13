@@ -1,6 +1,10 @@
-package it.italianDudes.idl.common;
+/*
+ *  Copyright (C) 2022 ItalianDudes
+ *  Software distributed under the GPLv3 license
+ */
+package it.italiandudes.idl.common;
 
-import it.italianDudes.idl.common.exceptions.IO.file.ConfigFormatException;
+import it.italiandudes.idl.common.exceptions.IO.file.ConfigFormatException;
 
 import java.io.*;
 import java.util.ArrayList;

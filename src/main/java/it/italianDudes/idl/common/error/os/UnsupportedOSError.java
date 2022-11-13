@@ -1,4 +1,8 @@
-package it.italianDudes.idl.common.error.os;
+/*
+ *  Copyright (C) 2022 ItalianDudes
+ *  Software distributed under the GPLv3 license
+ */
+package it.italiandudes.idl.common.error.os;
 
 @SuppressWarnings("unused")
 public class UnsupportedOSError extends Error {

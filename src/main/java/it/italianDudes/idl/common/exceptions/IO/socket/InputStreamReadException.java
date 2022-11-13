@@ -2,7 +2,7 @@
  *  Copyright (C) 2022 ItalianDudes
  *  Software distributed under the GPLv3 license
  */
-package it.italianDudes.idl.common.exceptions.IO.socket;
+package it.italiandudes.idl.common.exceptions.IO.socket;
 
 import java.io.IOException;
 

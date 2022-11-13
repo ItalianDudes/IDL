@@ -2,7 +2,7 @@
  *  Copyright (C) 2022 ItalianDudes
  *  Software distributed under the GPLv3 license
  */
-package it.italianDudes.idl.common;
+package it.italiandudes.idl.common;
 
 import org.apache.commons.codec.digest.DigestUtils;
 

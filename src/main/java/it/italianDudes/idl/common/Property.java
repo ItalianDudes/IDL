@@ -1,8 +1,12 @@
-package it.italianDudes.idl.common;
+/*
+ *  Copyright (C) 2022 ItalianDudes
+ *  Software distributed under the GPLv3 license
+ */
+package it.italiandudes.idl.common;
 
 import java.io.Serializable;
 
-public final class Property implements Serializable {
+public class Property implements Serializable {
 
     //Attributes
     private final String key;

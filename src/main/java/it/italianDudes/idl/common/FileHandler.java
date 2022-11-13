@@ -1,11 +1,15 @@
-package it.italianDudes.idl.common;
+/*
+ *  Copyright (C) 2022 ItalianDudes
+ *  Software distributed under the GPLv3 license
+ */
+package it.italiandudes.idl.common;
 
-import it.italianDudes.idl.common.exceptions.IO.directory.DirectoryNotFoundException;
+import it.italiandudes.idl.common.exceptions.IO.directory.DirectoryNotFoundException;
 
 import java.io.File;
 
 @SuppressWarnings("unused")
-public class FileHandler {
+public final class FileHandler {
 
     public static String getFileExtension(String path){
         return getFileExtension(new File(path));

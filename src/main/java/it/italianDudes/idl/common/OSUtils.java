@@ -1,7 +1,11 @@
-package it.italianDudes.idl.common;
+/*
+ *  Copyright (C) 2022 ItalianDudes
+ *  Software distributed under the GPLv3 license
+ */
+package it.italiandudes.idl.common;
 
 @SuppressWarnings("unused")
-public class OSUtils {
+public final class OSUtils {
 
     public static String getOsName() {
         return System.getProperty("os.name");

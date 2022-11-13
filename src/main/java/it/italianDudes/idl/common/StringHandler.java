@@ -2,7 +2,7 @@
  *  Copyright (C) 2022 ItalianDudes
  *  Software distributed under the GPLv3 license
  */
-package it.italianDudes.idl.common;
+package it.italiandudes.idl.common;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -11,21 +11,20 @@ import java.util.List;
 @SuppressWarnings("unused")
 public final class StringHandler {
 
+    //Constructors
     private StringHandler(){
         throw new UnsupportedOperationException("Can't instantiate this class!");
     }
 
-    @Deprecated
+    //Methods
     public static void sendString(OutputStream out, String str) throws IOException {
-
-        byte[] byteStr = str.getBytes();
-        DataOutputStream dataOut = new DataOutputStream(out);
-
-        dataOut.writeInt(byteStr.length);
-        dataOut.write(byteStr);
-        dataOut.flush();
-        out.flush();
+        RawSerializer.sendString(out,str);
     }
+
+    public static String receiveString(InputStream in) throws IOException{
+        return RawSerializer.receiveString(in);
+    }
+
     public static String getStringBeforeChar(String str, char car){
         if(str==null)
             return null;
@@ -36,6 +35,7 @@ public final class StringHandler {
         }
         return null;
     }
+
     public static String getStringAfterChar(String str, char car){
         if(str==null)
             return null;
@@ -67,6 +67,7 @@ public final class StringHandler {
         }
         return stringBuilder.toString();
     }
+
     public static String removeCharsBeforeString(String str, char car){
         StringBuilder stringBuilder = new StringBuilder();
         char[] strCharArray = str.toCharArray();
@@ -80,21 +81,6 @@ public final class StringHandler {
             }
         }
         return stringBuilder.toString();
-    }
-
-    @Deprecated
-    public static String receiveString(InputStream in) throws IOException{
-
-        DataInputStream dataIn = new DataInputStream(in);
-
-        int length = dataIn.readInt();
-
-        if(length>0){
-            byte[] byteStr = new byte[length];
-            dataIn.readFully(byteStr,0,byteStr.length);
-            return new String(byteStr);
-        }
-        return null;
     }
 
     public static int getOccurrencesFromString(String str, char car) {
