@@ -17,6 +17,10 @@ import java.util.Base64;
 @SuppressWarnings("unused")
 public final class RawSerializer {
 
+    //Attributes
+    public static final int DEFAULT_BUFFER_SIZE = 16384;
+
+    //Constructors
     private RawSerializer(){
         throw new UnsupportedOperationException("Can't instantiate this class!");
     }
@@ -56,7 +60,7 @@ public final class RawSerializer {
         writeString(outputStream,str,false);
     }
     public static void sendString(OutputStream outputStream, String str, boolean advancedLog) throws OutputStreamWriteException {
-        writeString(outputStream,str,advancedLog);
+        writeString(outputStream, str, advancedLog);
     }
     public static void sendObject(OutputStream outputStream, Object obj) throws OutputStreamWriteException, NotSerializableException, SpecializedStreamInstancingException {
         writeObject(outputStream,obj,false);
@@ -75,6 +79,24 @@ public final class RawSerializer {
     }
     public static void sendFormattedImage(OutputStream outputStream, FormattedImage formattedImage, boolean advancedLog) throws OutputStreamWriteException {
         writeFormattedImage(outputStream,formattedImage,advancedLog);
+    }
+    public static void sendBytes(OutputStream outputStream, byte[] bytes) throws OutputStreamWriteException {
+        writeBytes(outputStream, bytes, 0, bytes.length, false);
+    }
+    public static void sendBytes(OutputStream outputStream, byte[] bytes, int offset) throws OutputStreamWriteException {
+        writeBytes(outputStream, bytes, offset, bytes.length, false);
+    }
+    public static void sendBytes(OutputStream outputStream, byte[] bytes, int offset, int length) throws OutputStreamWriteException {
+        writeBytes(outputStream, bytes, offset, length, false);
+    }
+    public static void sendBytes(OutputStream outputStream, byte[] bytes, boolean advancedLog) throws OutputStreamWriteException {
+        writeBytes(outputStream, bytes, 0, bytes.length, advancedLog);
+    }
+    public static void sendBytes(OutputStream outputStream, byte[] bytes, int offset, boolean advancedLog) throws OutputStreamWriteException {
+        writeBytes(outputStream, bytes, offset, bytes.length, advancedLog);
+    }
+    public static void sendBytes(OutputStream outputStream, byte[] bytes, int offset, int length, boolean advancedLog) throws OutputStreamWriteException {
+        writeBytes(outputStream, bytes, offset, length, advancedLog);
     }
 
     //Public Definitions (Invokers): Receiver
@@ -125,6 +147,18 @@ public final class RawSerializer {
     }
     public static FormattedImage receiveFormattedImage(InputStream inputStream, boolean advancedLog) throws  CorruptedImageException, InputStreamReadException {
         return readFormattedImage(inputStream,advancedLog);
+    }
+    public static byte[] receiveBytes(InputStream inputStream, int numBytes) throws InputStreamReadException {
+        return readBytes(inputStream, numBytes, DEFAULT_BUFFER_SIZE,false);
+    }
+    public static byte[] receiveBytes(InputStream inputStream, int numBytes, int bufferSize) throws InputStreamReadException {
+        return readBytes(inputStream, numBytes, bufferSize, false);
+    }
+    public static byte[] receiveBytes(InputStream inputStream, int numBytes, boolean advancedLog) throws InputStreamReadException {
+        return readBytes(inputStream, numBytes, DEFAULT_BUFFER_SIZE, advancedLog);
+    }
+    public static byte[] receiveBytes(InputStream inputStream, int bufferSize, int numBytes, boolean advancedLog) throws InputStreamReadException {
+        return readBytes(inputStream, numBytes, bufferSize, advancedLog);
     }
 
     //Private Definitions: Output
@@ -209,7 +243,7 @@ public final class RawSerializer {
         }
     }
     private static void writeString(OutputStream outputStream, String str, boolean advancedLog) throws OutputStreamWriteException {
-        
+
         DataOutputStream outStream = new DataOutputStream(outputStream);
         byte[] byteStr = str.getBytes();
         try {
@@ -277,7 +311,21 @@ public final class RawSerializer {
         }
 
         RawSerializer.sendString(outputStream,Base64.getEncoder().encodeToString(byteStream.toByteArray()));
+    }
+    private static void writeBytes(OutputStream outputStream, byte[] bytes, int offset, int length, boolean advancedLog) throws OutputStreamWriteException {
 
+        try {
+            outputStream.write(bytes, offset, length);
+            outputStream.flush();
+        }catch (IOException e){
+            if(advancedLog)
+                if(Logger.isInitialized()){
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
+            throw new OutputStreamWriteException(e);
+        }
     }
 
     //Private Definitions: Input
@@ -427,7 +475,6 @@ public final class RawSerializer {
         }
         return obj;
     }
-
     private static FormattedImage readFormattedImage(InputStream inputStream, boolean advancedLog) throws InputStreamReadException, CorruptedImageException {
 
         String formatName = RawSerializer.receiveString(inputStream);
@@ -444,5 +491,24 @@ public final class RawSerializer {
             throw new CorruptedImageException(e);
         }
 
+    }
+    private static byte[] readBytes(InputStream inputStream, int numBytes, int bufferSize, boolean advancedLog) throws InputStreamReadException {
+
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[bufferSize];
+        try{
+            while(inputStream.read(buffer) > 0){
+                byteStream.write(buffer);
+            }
+        }catch (IOException e){
+            if(advancedLog)
+                if(Logger.isInitialized()){
+                    Logger.log(e);
+                }else{
+                    e.printStackTrace();
+                }
+            throw new InputStreamReadException(e);
+        }
+        return byteStream.toByteArray();
     }
 }
