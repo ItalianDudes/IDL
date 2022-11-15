@@ -4,6 +4,8 @@ plugins {
 
 group 'it.italiandudes'
 version '1.0.0'
+def versionType = 'RELEASE'
+def versionMarker = versionType.charAt(0)
 
 repositories {
     mavenCentral()
@@ -18,7 +20,13 @@ dependencies {
 
 jar {
     manifest {
-        attributes "Version" : archiveVersion.get()
+        attributes "Title" : "IDL"
+        attributes "Vendor" : "ItalianDudes"
+        attributes "Version" : archiveVersion.get()+versionMarker
+        attributes "Version-Number" : archiveVersion.get()
+        attributes "Version-Type" : versionType
+        attributes "Version-Marker" : versionMarker
+        attributes "Timestamp" : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         attributes "Automatic-Module-Name" : "it.italiandudes.idl"
     }
     archiveFileName = getRootDir().getName().toLowerCase()+"-"+archiveVersion.get()+".jar"
