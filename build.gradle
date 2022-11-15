@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 group 'it.italiandudes'
@@ -11,9 +10,9 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.jetbrains:annotations:23.0.0'
-    implementation 'commons-codec:commons-codec:1.15'
-    implementation 'commons-io:commons-io:2.11.0'
+    compileOnly 'org.jetbrains:annotations:23.0.0'
+    compileOnly'commons-codec:commons-codec:1.15'
+    compileOnly 'commons-io:commons-io:2.11.0'
 }
 
 jar {
@@ -23,21 +22,9 @@ jar {
     }
     archiveFileName = getRootDir().getName().toLowerCase()+"-"+archiveVersion.get()+".jar"
 }
-shadowJar {
-    manifest {
-        attributes "Version" : archiveVersion.get()
-        attributes "Automatic-Module-Name" : "it.italiandudes.idl"
-    }
-    archiveFileName = getRootDir().getName()+"-"+archiveVersion.get()+".jar"
-}
 
 task buildIDL {
     dependsOn jar
     group = "Build"
     description = "Build and assemble the jar"
-}
-task fatBuildIDL {
-    dependsOn shadowJar
-    group = "Build"
-    description = "Build and assemble the fat-jar"
 }
