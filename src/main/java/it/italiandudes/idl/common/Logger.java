@@ -124,25 +124,26 @@ public final class Logger {
     }
     public static void close() {
 
-        new Thread(() -> {
-            boolean result = false;
-            queue.shutdown();
-            try {
-                result = queue.awaitTermination(60, TimeUnit.SECONDS);
-                new CountDownLatch(1).countDown();
-            }catch (InterruptedException e){
-                e.printStackTrace();
-                System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] An error has occurred during queue termination");
-            }
-            if(!result) {
-                System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Time elapsed before queue termination");
-            }
-            try{
-                logger.close();
-            }catch (IOException e){
-                System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Can't close log file!");
-            }
-        }).start();
+        if(Logger.isInitialized())
+            new Thread(() -> {
+                boolean result = false;
+                queue.shutdown();
+                try {
+                    result = queue.awaitTermination(60, TimeUnit.SECONDS);
+                    new CountDownLatch(1).countDown();
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                    System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] An error has occurred during queue termination");
+                }
+                if(!result) {
+                    System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Time elapsed before queue termination");
+                }
+                try{
+                    logger.close();
+                }catch (IOException e){
+                    System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Can't close log file!");
+                }
+            }).start();
     }
     private static boolean createLogFile() throws IOException {
         String date = startTime.format(DateTimeFormatter.BASIC_ISO_DATE)+"_"+startTime.format(DateTimeFormatter.ISO_LOCAL_TIME);
