@@ -85,38 +85,38 @@ public final class StringHandler {
 
     public static int getOccurrencesFromString(String str, char car) {
 
-        int occorrenze = 0;
+        int occurrence = 0;
 
         for (int i = 0; i < str.length(); i++) {
             if (str.charAt(i) == car)
-                occorrenze++;
+                occurrence++;
         }
 
-        return occorrenze;
+        return occurrence;
     }
 
     public static String[] parseString(String str){
         List<String> commandPipeline = new ArrayList<>();
 
-        String[] comandoAsset = str.split(" ");
+        String[] commandAsset = str.split(" ");
 
         int index=0;
 
         String buffer;
 
-        while(index<comandoAsset.length){
+        while(index<commandAsset.length){
             List<String> composition = new ArrayList<>();
-            if(comandoAsset[index].contains("\"") && getOccurrencesFromString(comandoAsset[index],'\"')%2!=0){
-                buffer = comandoAsset[index];
+            if(commandAsset[index].contains("\"") && getOccurrencesFromString(commandAsset[index],'\"')%2!=0){
+                buffer = commandAsset[index];
                 buffer = buffer.replaceAll("\"","");
                 composition.add(buffer);
                 try {
                     do {
                         index++;
-                        buffer = comandoAsset[index];
+                        buffer = commandAsset[index];
                         buffer = buffer.replaceAll("\"", "");
                         composition.add(buffer);
-                    } while (!comandoAsset[index].contains("\""));
+                    } while (!commandAsset[index].contains("\""));
                 }catch (ArrayIndexOutOfBoundsException outOfBoundsException){
                     if(Logger.isInitialized()) {
                         Logger.log("Error during splitting string: missing \"", new InfoFlags(true, false));
@@ -132,12 +132,12 @@ public final class StringHandler {
                 String newStr = stringBuilder.toString();
                 newStr = newStr.substring(0,newStr.length()-1);
                 commandPipeline.add(newStr);
-            }else if (comandoAsset[index].contains("\"") && getOccurrencesFromString(comandoAsset[index],'\"')%2==0){
-                buffer = comandoAsset[index];
+            }else if (commandAsset[index].contains("\"") && getOccurrencesFromString(commandAsset[index],'\"')%2==0){
+                buffer = commandAsset[index];
                 buffer = buffer.replaceAll("\"","");
                 commandPipeline.add(buffer);
             }else{
-                commandPipeline.add(comandoAsset[index]);
+                commandPipeline.add(commandAsset[index]);
             }
             index++;
         }
