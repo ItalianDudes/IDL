@@ -27,6 +27,11 @@ public final class SQLiteHandler {
     }
     public static Connection openConnection(String dbPath, boolean readOnly){
 
+        if(dbPath==null)
+            return null;
+        File fileChecker = new File(dbPath);
+        if(!fileChecker.exists() || !fileChecker.isFile())
+            return null;
         try{
             Connection dbConnection = DriverManager.getConnection("jdbc:sqlite:"+dbPath);
             dbConnection.setReadOnly(readOnly);
