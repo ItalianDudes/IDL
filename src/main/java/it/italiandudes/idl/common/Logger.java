@@ -13,6 +13,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -111,15 +112,18 @@ public final class Logger {
 
             Scanner inFile = new Scanner(latestLogFile);
 
-            if(inFile.hasNext()){
-                date = inFile.nextLine();
-            }
+            try {
+                if (inFile.hasNext()) {
+                    date = inFile.nextLine();
+                }
+            }catch (NoSuchElementException ignored){}
 
             inFile.close();
 
-            File newLogDestination = new File(IDL.Defs.LOG_DIR+date+".log");
-            FileUtils.copyFile(latestLogFilePointer,newLogDestination);
-
+            if(date!=null) {
+                File newLogDestination = new File(IDL.Defs.LOG_DIR + date + ".log");
+                FileUtils.copyFile(latestLogFilePointer, newLogDestination);
+            }
         }
     }
     public static void close() {
@@ -152,6 +156,7 @@ public final class Logger {
         try {
             logger = new BufferedWriter(new FileWriter(latestLogFilePointer));
             logger.append(date).append("\n");
+            logger.flush();
         }catch (IOException e){
             System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Can't initialize logger!");
             throw e;
