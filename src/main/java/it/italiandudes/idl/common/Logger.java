@@ -30,7 +30,7 @@ public final class Logger {
     private final static LocalDateTime startTime = LocalDateTime.now();
 
     //Classes
-    private static class LogWriter implements Runnable {
+    private static final class LogWriter implements Runnable {
 
         //Attributes
         private final String message;
