@@ -14,7 +14,7 @@ public class Timer implements Serializable {
     private final RunningTimer timer;
 
     //Classes
-    private static class RunningTimer implements Runnable {
+    private static final class RunningTimer implements Runnable {
 
         //Attributes
         private int seconds;
