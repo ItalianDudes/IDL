@@ -161,6 +161,7 @@ public final class Logger {
             System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Can't initialize logger!");
             throw e;
         }
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> Logger.log(e));
         return true;
     }
     private synchronized static void writeMessageIntoLogFile(String message, InfoFlags flags) throws IOException {
