@@ -15,9 +15,6 @@ import java.util.Base64;
 @SuppressWarnings("unused")
 public final class PeerSerializer {
 
-    //Attributes
-    public static final int DEFAULT_BUFFER_SIZE = 16384;
-
     //Constructors
     private PeerSerializer(){
         throw new UnsupportedOperationException("Can't instantiate this class!");
@@ -78,22 +75,22 @@ public final class PeerSerializer {
     public static void sendFormattedImage(Peer peer, FormattedImage formattedImage, boolean advancedLog) throws OutputStreamWriteException, SpecializedStreamInstancingException, ValidatingStreamException, NullPeerException {
         writeFormattedImage(peer,formattedImage,advancedLog);
     }
-    public static void sendBytes(Peer peer, byte[] bytes) throws OutputStreamWriteException, ValidatingStreamException, NullPeerException {
+    public static void sendBytes(Peer peer, byte[] bytes) throws OutputStreamWriteException, ValidatingStreamException, SpecializedStreamInstancingException, NullPeerException {
         writeBytes(peer, bytes, 0, bytes.length, false);
     }
-    public static void sendBytes(Peer peer, byte[] bytes, int offset) throws OutputStreamWriteException, ValidatingStreamException, NullPeerException {
+    public static void sendBytes(Peer peer, byte[] bytes, int offset) throws OutputStreamWriteException, ValidatingStreamException, SpecializedStreamInstancingException, NullPeerException {
         writeBytes(peer, bytes, offset, bytes.length, false);
     }
-    public static void sendBytes(Peer peer, byte[] bytes, int offset, int length) throws OutputStreamWriteException, ValidatingStreamException, NullPeerException {
+    public static void sendBytes(Peer peer, byte[] bytes, int offset, int length) throws OutputStreamWriteException, ValidatingStreamException, SpecializedStreamInstancingException, NullPeerException {
         writeBytes(peer, bytes, offset, length, false);
     }
-    public static void sendBytes(Peer peer, byte[] bytes, boolean advancedLog) throws OutputStreamWriteException, ValidatingStreamException, NullPeerException {
+    public static void sendBytes(Peer peer, byte[] bytes, boolean advancedLog) throws OutputStreamWriteException, ValidatingStreamException, SpecializedStreamInstancingException, NullPeerException {
         writeBytes(peer, bytes, 0, bytes.length, advancedLog);
     }
-    public static void sendBytes(Peer peer, byte[] bytes, int offset, boolean advancedLog) throws OutputStreamWriteException, ValidatingStreamException, NullPeerException {
+    public static void sendBytes(Peer peer, byte[] bytes, int offset, boolean advancedLog) throws OutputStreamWriteException, ValidatingStreamException, SpecializedStreamInstancingException, NullPeerException {
         writeBytes(peer, bytes, offset, bytes.length, advancedLog);
     }
-    public static void sendBytes(Peer peer, byte[] bytes, int offset, int length, boolean advancedLog) throws OutputStreamWriteException, ValidatingStreamException, NullPeerException {
+    public static void sendBytes(Peer peer, byte[] bytes, int offset, int length, boolean advancedLog) throws OutputStreamWriteException, ValidatingStreamException, SpecializedStreamInstancingException, NullPeerException {
         writeBytes(peer, bytes, offset, length, advancedLog);
     }
 
@@ -146,17 +143,11 @@ public final class PeerSerializer {
     public static FormattedImage receiveFormattedImage(Peer peer, boolean advancedLog) throws SpecializedStreamInstancingException, CorruptedImageException, InputStreamReadException, ValidatingStreamException, NullPeerException {
         return readFormattedImage(peer,advancedLog);
     }
-    public static byte[] receiveBytes(Peer peer, int numBytes) throws InputStreamReadException, ValidatingStreamException, NullPeerException {
-        return readBytes(peer, numBytes, DEFAULT_BUFFER_SIZE,false);
+    public static byte[] receiveBytes(Peer peer) throws InputStreamReadException, SpecializedStreamInstancingException, ValidatingStreamException, NullPeerException {
+        return readBytes(peer, false);
     }
-    public static byte[] receiveBytes(Peer peer, int numBytes, int bufferSize) throws InputStreamReadException, ValidatingStreamException, NullPeerException {
-        return readBytes(peer, numBytes, bufferSize, false);
-    }
-    public static byte[] receiveBytes(Peer peer, int numBytes, boolean advancedLog) throws InputStreamReadException, ValidatingStreamException, NullPeerException {
-        return readBytes(peer, numBytes, DEFAULT_BUFFER_SIZE, advancedLog);
-    }
-    public static byte[] receiveBytes(Peer peer, int bufferSize, int numBytes, boolean advancedLog) throws InputStreamReadException, ValidatingStreamException, NullPeerException {
-        return readBytes(peer, numBytes, bufferSize, advancedLog);
+    public static byte[] receiveBytes(Peer peer, boolean advancedLog) throws InputStreamReadException, SpecializedStreamInstancingException, ValidatingStreamException, NullPeerException {
+        return readBytes(peer, advancedLog);
     }
 
     //Private Definitions: Output
@@ -457,7 +448,7 @@ public final class PeerSerializer {
         PeerSerializer.sendString(peer,Base64.getEncoder().encodeToString(byteStream.toByteArray()));
 
     }
-    private static void writeBytes(Peer peer, byte[] bytes, int offset, int length, boolean advancedLog) throws OutputStreamWriteException, ValidatingStreamException, NullPeerException {
+    private static void writeBytes(Peer peer, byte[] bytes, int offset, int length, boolean advancedLog) throws OutputStreamWriteException, ValidatingStreamException, SpecializedStreamInstancingException, NullPeerException {
 
         try {
             checkOutputStreamValidity(peer, advancedLog);
@@ -470,17 +461,19 @@ public final class PeerSerializer {
                 }
             throw e;
         }
+        byte[] finalByteArray = new byte[length];
+        System.arraycopy(bytes, offset, finalByteArray, 0, length);
+
+        String base64byteString = Base64.getEncoder().encodeToString(finalByteArray);
         try {
-            peer.getPeerSocket().getOutputStream().write(bytes, offset, length);
-            peer.getPeerSocket().getOutputStream().flush();
-        }catch (IOException e){
-            if(advancedLog)
-                if(Logger.isInitialized()){
-                    Logger.log(e);
-                }else{
-                    e.printStackTrace();
-                }
-            throw new OutputStreamWriteException(e);
+            PeerSerializer.sendString(peer, base64byteString, advancedLog);
+        }catch (SpecializedStreamInstancingException e){
+            if(Logger.isInitialized()){
+                Logger.log(e);
+            }else{
+                e.printStackTrace();
+            }
+            throw e;
         }
     }
 
@@ -794,7 +787,7 @@ public final class PeerSerializer {
         }
 
     }
-    private static byte[] readBytes(Peer peer, int numBytes, int bufferSize, boolean advancedLog) throws InputStreamReadException, NullPeerException, ValidatingStreamException {
+    private static byte[] readBytes(Peer peer, boolean advancedLog) throws InputStreamReadException, SpecializedStreamInstancingException, NullPeerException, ValidatingStreamException {
 
         try {
             checkInputStreamValidity(peer, advancedLog);
@@ -807,22 +800,17 @@ public final class PeerSerializer {
                 }
             throw e;
         }
-        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        byte[] buffer = new byte[bufferSize];
-        try{
-            while(peer.getPeerSocket().getInputStream().read(buffer) > 0){
-                byteStream.write(buffer);
+        try {
+            String base64byteString = PeerSerializer.receiveString(peer, advancedLog);
+            return Base64.getDecoder().decode(base64byteString);
+        }catch (InputStreamReadException | SpecializedStreamInstancingException e){
+            if(Logger.isInitialized()){
+                Logger.log(e);
+            }else{
+                e.printStackTrace();
             }
-        }catch (IOException e){
-            if(advancedLog)
-                if(Logger.isInitialized()){
-                    Logger.log(e);
-                }else{
-                    e.printStackTrace();
-                }
-            throw new InputStreamReadException(e);
+            throw e;
         }
-        return byteStream.toByteArray();
     }
 
     //Check Streams Integrity

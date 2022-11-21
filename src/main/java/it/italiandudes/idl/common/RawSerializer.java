@@ -17,9 +17,6 @@ import java.util.Base64;
 @SuppressWarnings("unused")
 public final class RawSerializer {
 
-    //Attributes
-    public static final int DEFAULT_BUFFER_SIZE = 16384;
-
     //Constructors
     private RawSerializer(){
         throw new UnsupportedOperationException("Can't instantiate this class!");
