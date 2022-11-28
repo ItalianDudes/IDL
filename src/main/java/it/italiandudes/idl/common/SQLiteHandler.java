@@ -69,7 +69,7 @@ public final class SQLiteHandler {
             if(dbConnection == null || dbConnection.isClosed() || dbConnection.isReadOnly())
                 return null;
 
-            return dbConnection.prepareStatement(query);
+            return dbConnection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
         }catch (SQLException e){
             if(Logger.isInitialized()) {
                 Logger.log(e);
