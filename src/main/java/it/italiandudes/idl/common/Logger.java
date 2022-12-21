@@ -73,8 +73,6 @@ public final class Logger {
         return logger != null;
     }
     public static boolean init(boolean logUncaughtExceptions) throws IOException {
-        if(logUncaughtExceptions)
-            Thread.setDefaultUncaughtExceptionHandler((t, e) -> Logger.log(e));
         try {
             backupOldLog();
         }catch (IOException e){
@@ -88,7 +86,10 @@ public final class Logger {
             }
         }
         queue = Executors.newSingleThreadExecutor();
-        return createLogFile();
+        boolean logCreated = createLogFile();
+        if(logUncaughtExceptions)
+            Thread.setDefaultUncaughtExceptionHandler((t, e) -> Logger.log(e));
+        return logCreated;
     }
     public static boolean init() throws IOException {
         return init(true);
