@@ -101,8 +101,16 @@ public final class Logger {
         log("["+Thread.currentThread().getStackTrace()[2]+"] "+message);
     }
     public static void log(String message, InfoFlags flags){
-        if(!queue.isShutdown())
-            queue.submit(new LogWriter(message, flags));
+        if(Logger.isInitialized()) {
+            if (!queue.isShutdown())
+                queue.submit(new LogWriter(message, flags));
+        }else{
+            if(flags.isErrStream()){
+                System.err.println(message);
+            }else{
+                System.out.println(message);
+            }
+        }
     }
     private static void backupOldLog() throws IOException{
         File latestLogFile = new File(IDL.Defs.LOG_LATEST_FILE);
