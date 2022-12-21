@@ -72,7 +72,9 @@ public final class Logger {
     public static boolean isInitialized(){
         return logger != null;
     }
-    public static boolean init() throws IOException {
+    public static boolean init(boolean logUncaughtExceptions) throws IOException {
+        if(logUncaughtExceptions)
+            Thread.setDefaultUncaughtExceptionHandler((t, e) -> Logger.log(e));
         try {
             backupOldLog();
         }catch (IOException e){
@@ -87,6 +89,9 @@ public final class Logger {
         }
         queue = Executors.newSingleThreadExecutor();
         return createLogFile();
+    }
+    public static boolean init() throws IOException {
+        return init(true);
     }
     public static void log(String message){
         log(message,new InfoFlags());
@@ -169,7 +174,6 @@ public final class Logger {
             System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Can't initialize logger!");
             throw e;
         }
-        Thread.setDefaultUncaughtExceptionHandler((t, e) -> Logger.log(e));
         return true;
     }
     private synchronized static void writeMessageIntoLogFile(String message, InfoFlags flags) throws IOException {
