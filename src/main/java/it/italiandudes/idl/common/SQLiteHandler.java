@@ -77,6 +77,17 @@ public final class SQLiteHandler {
             return null;
         }
     }
+    public static Statement getNewStatement(Connection dbConnection) {
+        try {
+            if(dbConnection == null || dbConnection.isClosed())
+                return null;
+
+            return dbConnection.createStatement();
+        }catch (SQLException e){
+            Logger.log(e);
+            return null;
+        }
+    }
     public static void closeConnection(Connection dbConnection){
 
         try {
