@@ -30,8 +30,6 @@ public final class SQLiteHandler {
         if(dbPath==null)
             return null;
         File fileChecker = new File(dbPath);
-        if(!fileChecker.exists() || !fileChecker.isFile())
-            return null;
         try{
             Connection dbConnection = DriverManager.getConnection("jdbc:sqlite:"+dbPath);
             dbConnection.setReadOnly(readOnly);
@@ -76,6 +74,17 @@ public final class SQLiteHandler {
             }else{
                 e.printStackTrace();
             }
+            return null;
+        }
+    }
+    public static Statement getNewStatement(Connection dbConnection) {
+        try {
+            if(dbConnection == null || dbConnection.isClosed())
+                return null;
+
+            return dbConnection.createStatement();
+        }catch (SQLException e){
+            Logger.log(e);
             return null;
         }
     }
