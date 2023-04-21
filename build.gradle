@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'it.italiandudes'
-version '1.0.1'
+version '1.0.3'
 def versionType = 'RELEASE'
 def versionMarker = versionType.charAt(0)
 

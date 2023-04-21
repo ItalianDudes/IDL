@@ -2,19 +2,18 @@ package it.italiandudes.idl.common;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Enumeration;
 import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "Duplicates"})
 public class JarHandler {
 
     // Constructors
@@ -23,61 +22,114 @@ public class JarHandler {
     }
 
     // Methods
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static boolean copyFolderFromJar(@NotNull String jarPath, String folderName, File destFolder, boolean replaceIfDestExist) throws IOException {
-        if (!destFolder.exists())
-            destFolder.mkdirs();
+    public static void copyFileFromJar(@NotNull File jarFilePointer, @NotNull String filePathInJar, @NotNull File destPath) throws IOException {
+        if (!jarFilePointer.exists()) {
+            throw new FileNotFoundException("The path \"" + jarFilePointer.getAbsolutePath() + "\" doesn't exist");
+        }
 
-        byte[] buffer = new byte[1024];
+        // Flipping backslashes
+        filePathInJar = filePathInJar.replace("\\", "/");
 
-        File fullPath;
+        // Remove useless slashes
+        if (filePathInJar.startsWith("/")) {
+            filePathInJar = filePathInJar.substring(1);
+        }
+        if (filePathInJar.endsWith("/")) {
+            filePathInJar = filePathInJar.substring(0, filePathInJar.length()-1);
+        }
+
+        JarFile jarFile;
         try {
-            if (!jarPath.startsWith("file"))
-                jarPath = "file://" + jarPath;
-
-            fullPath = new File(new URI(jarPath));
-        } catch (URISyntaxException e) {
-            Logger.log(e);
-            return false;
+            jarFile = new JarFile(jarFilePointer);
+        } catch (IOException e) {
+            throw new IOException("Can't open jar file at path \""+jarFilePointer.getAbsolutePath()+"\"");
         }
 
-        ZipInputStream zipInputStream = new ZipInputStream(Files.newInputStream(fullPath.toPath()));
-
-        ZipEntry entry;
-        while ((entry = zipInputStream.getNextEntry()) != null) {
-            if (!entry.getName().startsWith(folderName + '/'))
-                continue;
-
-            String fileName = entry.getName();
-
-            if (fileName.charAt(fileName.length() - 1) == '/') {
-                File file = new File(destFolder + File.separator + fileName);
-                if (file.isFile()) {
-                    file.delete();
-                }
-                file.mkdirs();
-                continue;
+        JarEntry entry = jarFile.getJarEntry(filePathInJar);
+        if (entry != null) {
+            Path destination = destPath.toPath();
+            InputStream inStream = null;
+            try {
+                inStream = jarFile.getInputStream(entry);
+                Files.copy(inStream, destination, StandardCopyOption.REPLACE_EXISTING);
+                inStream.close();
+            }catch (IOException e) {
+                try {
+                    if (inStream != null) inStream.close();
+                }catch (Exception ignored){}
+                throw new IOException("An error has occurred on file copying");
             }
-
-            File file = new File(destFolder + File.separator + fileName);
-            if (replaceIfDestExist && file.exists()) continue;
-
-            if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
-
-            if (!file.exists()) file.createNewFile();
-            FileOutputStream outStream = new FileOutputStream(file);
-
-            int len;
-            while ((len = zipInputStream.read(buffer)) > 0) {
-                outStream.write(buffer, 0, len);
-            }
-            outStream.close();
         }
-
-        zipInputStream.closeEntry();
-        zipInputStream.close();
-        return true;
     }
+    public static void copyDirectoryFromJar(@NotNull File jarFilePointer, @NotNull String directoryPathInJar, @NotNull File destPath, boolean extractDirectory) throws IOException {
+        if (!jarFilePointer.exists()) {
+            throw new FileNotFoundException("The path \""+jarFilePointer.getAbsolutePath()+"\" doesn't exist");
+        }
+
+        // Flipping backslashes
+        directoryPathInJar = directoryPathInJar.replace("\\", "/");
+
+        // Remove useless slashes
+        if (directoryPathInJar.startsWith("/")) {
+            directoryPathInJar = directoryPathInJar.substring(1);
+        }
+        if (directoryPathInJar.endsWith("/")) {
+            directoryPathInJar = directoryPathInJar.substring(0, directoryPathInJar.length()-1);
+        }
+
+        // If true, allows to copy the entire folder, not only the content
+        if (!extractDirectory) {
+            if (directoryPathInJar.contains("/")) {
+                String[] splitJarFolderPath = directoryPathInJar.split("/");
+                destPath = new File(destPath.getAbsolutePath()+'/'+splitJarFolderPath[splitJarFolderPath.length - 1]);
+            } else {
+                destPath = new File(destPath.getAbsolutePath()+'/' + directoryPathInJar);
+            }
+        }
+
+        JarFile jarFile;
+        try {
+            jarFile = new JarFile(jarFilePointer);
+        } catch (IOException e) {
+            throw new IOException("Can't open jar file at path \""+jarFilePointer.getAbsolutePath()+"\"");
+        }
+
+        Enumeration<JarEntry> entries = jarFile.entries();
+
+        while (entries.hasMoreElements()) {
+            JarEntry entry = entries.nextElement();
+            if (entry.getName().startsWith(directoryPathInJar + "/")) {
+                Path destination = Paths.get(destPath.getAbsolutePath(), entry.getName().substring(directoryPathInJar.length() + 1));
+                if (entry.isDirectory()) {
+                    try {
+                        Files.createDirectories(destination);
+                    }catch (IOException e) {
+                        try {
+                            jarFile.close();
+                        }catch (Exception ignored){}
+                        throw new IOException("An error has occurred while creating directory tree destination \""+destination+"\"");
+                    }
+                } else {
+                    InputStream inStream = null;
+                    try {
+                        inStream = jarFile.getInputStream(entry);
+                        Files.copy(inStream, destination, StandardCopyOption.REPLACE_EXISTING);
+                        inStream.close();
+                    } catch (IOException e) {
+                        try {
+                            if (inStream != null) inStream.close();
+                        }catch (Exception ignored){}
+                        try {
+                            jarFile.close();
+                        }catch (Exception ignored){}
+                        throw new IOException("An error has occurred on file copying");
+                    }
+                }
+            }
+        }
+        jarFile.close();
+    }
+
 
     // Manifest Reader
     public static final class ManifestReader {
