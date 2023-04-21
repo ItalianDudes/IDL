@@ -27,6 +27,9 @@ public class JarHandler {
             throw new FileNotFoundException("The path \"" + jarFilePointer.getAbsolutePath() + "\" doesn't exist");
         }
 
+        //noinspection ResultOfMethodCallIgnored
+        destPath.mkdirs();
+
         // Flipping backslashes
         filePathInJar = filePathInJar.replace("\\", "/");
 
@@ -65,9 +68,6 @@ public class JarHandler {
         if (!jarFilePointer.exists()) {
             throw new FileNotFoundException("The path \""+jarFilePointer.getAbsolutePath()+"\" doesn't exist");
         }
-
-        //noinspection ResultOfMethodCallIgnored
-        destPath.mkdirs();
 
         // Flipping backslashes
         directoryPathInJar = directoryPathInJar.replace("\\", "/");
