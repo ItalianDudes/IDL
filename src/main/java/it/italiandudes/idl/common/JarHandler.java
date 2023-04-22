@@ -3,10 +3,7 @@ package it.italiandudes.idl.common;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.util.Enumeration;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
@@ -22,7 +19,7 @@ public class JarHandler {
     }
 
     // Methods
-    public static void copyFileFromJar(@NotNull File jarFilePointer, @NotNull String filePathInJar, @NotNull File destPath) throws IOException {
+    public static void copyFileFromJar(@NotNull File jarFilePointer, @NotNull String filePathInJar, @NotNull File destPath, boolean replaceExistingFiles) throws IOException {
         if (!jarFilePointer.exists()) {
             throw new FileNotFoundException("The path \"" + jarFilePointer.getAbsolutePath() + "\" doesn't exist");
         }
@@ -54,7 +51,12 @@ public class JarHandler {
             InputStream inStream = null;
             try {
                 inStream = jarFile.getInputStream(entry);
-                Files.copy(inStream, destination, StandardCopyOption.REPLACE_EXISTING);
+                if (replaceExistingFiles) Files.copy(inStream, destination, StandardCopyOption.REPLACE_EXISTING);
+                else {
+                    try {
+                        Files.copy(inStream, destination);
+                    } catch (FileAlreadyExistsException ignored) {}
+                }
                 inStream.close();
             }catch (IOException e) {
                 try {
@@ -64,7 +66,7 @@ public class JarHandler {
             }
         }
     }
-    public static void copyDirectoryFromJar(@NotNull File jarFilePointer, @NotNull String directoryPathInJar, @NotNull File destPath, boolean extractDirectory) throws IOException {
+    public static void copyDirectoryFromJar(@NotNull File jarFilePointer, @NotNull String directoryPathInJar, @NotNull File destPath, boolean extractDirectory, boolean replaceExistingFiles) throws IOException {
         if (!jarFilePointer.exists()) {
             throw new FileNotFoundException("The path \""+jarFilePointer.getAbsolutePath()+"\" doesn't exist");
         }
@@ -116,7 +118,12 @@ public class JarHandler {
                     InputStream inStream = null;
                     try {
                         inStream = jarFile.getInputStream(entry);
-                        Files.copy(inStream, destination, StandardCopyOption.REPLACE_EXISTING);
+                        if (replaceExistingFiles) Files.copy(inStream, destination, StandardCopyOption.REPLACE_EXISTING);
+                        else {
+                            try {
+                                Files.copy(inStream, destination);
+                            } catch (FileAlreadyExistsException ignored) {}
+                        }
                         inStream.close();
                     } catch (IOException e) {
                         try {
