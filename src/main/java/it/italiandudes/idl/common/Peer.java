@@ -56,14 +56,12 @@ public class Peer implements Serializable {
 
         Peer peer = (Peer) o;
 
-        if (!getPeerSocket().equals(peer.getPeerSocket())) return false;
-        return getCredential().equals(peer.getCredential());
+        return getCredential() != null ? getCredential().equals(peer.getCredential()) : peer.getCredential() == null;
     }
+
     @Override
     public int hashCode() {
-        int result = getPeerSocket().hashCode();
-        result = 31 * result + getCredential().hashCode();
-        return result;
+        return getCredential() != null ? getCredential().hashCode() : 0;
     }
     @Override
     public String toString(){
