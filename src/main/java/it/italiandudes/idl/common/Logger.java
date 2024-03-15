@@ -107,9 +107,8 @@ public final class Logger {
         log("["+Thread.currentThread().getStackTrace()[2]+"] "+message);
     }
     public static void log(String message, InfoFlags flags){
-        if(Logger.isInitialized()) {
-            if (!queue.isShutdown())
-                queue.submit(new LogWriter(message, flags));
+        if(Logger.isInitialized() && !queue.isShutdown()) {
+            queue.submit(new LogWriter(message, flags));
         }else{
             if(flags.isErrStream()){
                 System.err.println(message);
@@ -141,7 +140,6 @@ public final class Logger {
         }
     }
     public static void close() {
-
         if(Logger.isInitialized())
             new Thread(() -> {
                 boolean result = false;
@@ -150,7 +148,7 @@ public final class Logger {
                     result = queue.awaitTermination(60, TimeUnit.SECONDS);
                     new CountDownLatch(1).countDown();
                 }catch (InterruptedException e){
-                    e.printStackTrace();
+                    Logger.log(e);
                     System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] An error has occurred during queue termination");
                 }
                 if(!result) {

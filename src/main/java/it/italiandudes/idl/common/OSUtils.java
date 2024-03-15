@@ -6,7 +6,6 @@ package it.italiandudes.idl.common;
 
 @SuppressWarnings("unused")
 public final class OSUtils {
-
     public static String getOsName() {
         return System.getProperty("os.name");
     }
@@ -28,5 +27,4 @@ public final class OSUtils {
     public static boolean isFreeBSD(){
         return getOsName().contains("FreeBSD");
     }
-
 }

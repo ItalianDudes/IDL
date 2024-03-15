@@ -154,87 +154,56 @@ public final class RawSerializer {
 
     //Private Definitions: Output
     private static void writeInt(OutputStream outputStream, int integerNumber, boolean advancedLog) throws OutputStreamWriteException {
-        
         DataOutputStream outStream = new DataOutputStream(outputStream);
-        try{
+        try {
             outStream.writeInt(integerNumber);
             outStream.flush();
-        }catch (IOException e){
-            if(advancedLog)
-                if(Logger.isInitialized()) {
-                    Logger.log(e);
-                }else{
-                    e.printStackTrace();
-                }
+        } catch (IOException e) {
+            if(advancedLog) Logger.log(e);
             throw new OutputStreamWriteException(e);
         }
     }
     private static void writeLong(OutputStream outputStream, long longNumber, boolean advancedLog) throws OutputStreamWriteException {
-        
         DataOutputStream outStream = new DataOutputStream(outputStream);
-        try{
+        try {
             outStream.writeLong(longNumber);
             outStream.flush();
-        }catch (IOException e){
-            if(advancedLog)
-                if(Logger.isInitialized()) {
-                    Logger.log(e);
-                }else{
-                    e.printStackTrace();
-                }
+        } catch (IOException e) {
+            if(advancedLog) Logger.log(e);
             throw new OutputStreamWriteException(e);
         }
     }
     private static void writeFloat(OutputStream outputStream, float floatNumber, boolean advancedLog) throws OutputStreamWriteException {
-        
         DataOutputStream outStream = new DataOutputStream(outputStream);
-        try{
+        try {
             outStream.writeFloat(floatNumber);
             outStream.flush();
-        }catch (IOException e){
-            if(advancedLog)
-                if(Logger.isInitialized()) {
-                    Logger.log(e);
-                }else{
-                    e.printStackTrace();
-                }
+        } catch (IOException e) {
+            if(advancedLog) Logger.log(e);
             throw new OutputStreamWriteException(e);
         }
     }
     private static void writeDouble(OutputStream outputStream, double doubleNumber, boolean advancedLog) throws OutputStreamWriteException {
-        
         DataOutputStream outStream = new DataOutputStream(outputStream);
-        try{
+        try {
             outStream.writeDouble(doubleNumber);
             outStream.flush();
-        }catch (IOException e){
-            if(advancedLog)
-                if(Logger.isInitialized()) {
-                    Logger.log(e);
-                }else{
-                    e.printStackTrace();
-                }
+        } catch (IOException e) {
+            if(advancedLog) Logger.log(e);
             throw new OutputStreamWriteException(e);
         }
     }
     private static void writeBoolean(OutputStream outputStream, boolean state, boolean advancedLog) throws OutputStreamWriteException {
-        
         DataOutputStream outStream = new DataOutputStream(outputStream);
-        try{
+        try {
             outStream.writeBoolean(state);
             outStream.flush();
-        }catch (IOException e){
-            if(advancedLog)
-                if(Logger.isInitialized()) {
-                    Logger.log(e);
-                }else{
-                    e.printStackTrace();
-                }
+        } catch (IOException e) {
+            if(advancedLog) Logger.log(e);
             throw new OutputStreamWriteException(e);
         }
     }
     private static void writeString(OutputStream outputStream, String str, boolean advancedLog) throws OutputStreamWriteException {
-
         DataOutputStream outStream = new DataOutputStream(outputStream);
         byte[] byteStr = str.getBytes();
         try {
@@ -242,169 +211,97 @@ public final class RawSerializer {
             outStream.flush();
             outStream.write(byteStr);
             outStream.flush();
-        }catch (IOException e){
-            if(advancedLog)
-                if(Logger.isInitialized()) {
-                    Logger.log(e);
-                }else{
-                    e.printStackTrace();
-                }
+        } catch (IOException e) {
+            if(advancedLog) Logger.log(e);
             throw new OutputStreamWriteException(e);
         }
     }
     private static void writeObject(OutputStream outputStream, Object obj, boolean advancedLog) throws OutputStreamWriteException, NotSerializableException, SpecializedStreamInstancingException {
-        if (!(obj instanceof Serializable))
-            throw new NotSerializableException(obj.getClass().getCanonicalName());
-
+        if (!(obj instanceof Serializable)) throw new NotSerializableException(obj.getClass().getCanonicalName());
         ObjectOutputStream outStream;
         try {
             outStream = new ObjectOutputStream(outputStream);
         } catch (IOException e) {
-            if (advancedLog)
-                if (Logger.isInitialized()) {
-                    Logger.log(e);
-                } else {
-                    e.printStackTrace();
-                }
+            if(advancedLog) Logger.log(e);
             throw new SpecializedStreamInstancingException(e);
         }
         try {
             outStream.writeObject(obj);
             outStream.flush();
         } catch (IOException e) {
-            if (advancedLog)
-                if (Logger.isInitialized()) {
-                    Logger.log(e);
-                } else {
-                    e.printStackTrace();
-                }
+            if(advancedLog) Logger.log(e);
             throw new OutputStreamWriteException(e);
         }
     }
     private static void writeFormattedImage(OutputStream outputStream, FormattedImage formattedImage, boolean advancedLog) throws OutputStreamWriteException {
-        
         RawSerializer.sendString(outputStream,formattedImage.getFormatName(),advancedLog);
-
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-
         MemoryCacheImageOutputStream imageStream = new MemoryCacheImageOutputStream(byteStream);
-
         try {
             ImageIO.write(formattedImage.getImage(),formattedImage.getFormatName(),imageStream);
         } catch (IOException exception) {
-            if(advancedLog)
-                if(Logger.isInitialized()) {
-                    Logger.log(exception);
-                }else{
-                    exception.printStackTrace();
-                }
+            if(advancedLog) Logger.log(exception);
             throw new OutputStreamWriteException(exception);
         }
-
         RawSerializer.sendString(outputStream,Base64.getEncoder().encodeToString(byteStream.toByteArray()));
     }
     private static void writeBytes(OutputStream outputStream, byte[] bytes, int offset, int length, boolean advancedLog) throws OutputStreamWriteException {
-
         byte[] finalByteArray = new byte[length];
         System.arraycopy(bytes, offset, finalByteArray, 0, length);
-
         String base64byteString = Base64.getEncoder().encodeToString(finalByteArray);
         RawSerializer.sendString(outputStream, base64byteString, advancedLog);
-
     }
 
     //Private Definitions: Input
     private static int readInt(InputStream inputStream, boolean advancedLog) throws InputStreamReadException {
-        
         DataInputStream inStream = new DataInputStream(inputStream);
-        int integerNumber;
-        try{
-            integerNumber = inStream.readInt();
-        }catch (IOException e){
-            if(advancedLog)
-                if(Logger.isInitialized()) {
-                    Logger.log(e);
-                }else{
-                    e.printStackTrace();
-                }
+        try {
+            return inStream.readInt();
+        } catch (IOException e) {
+            if(advancedLog) Logger.log(e);
             throw new InputStreamReadException(e);
         }
-        return integerNumber;
     }
     private static long readLong(InputStream inputStream, boolean advancedLog) throws InputStreamReadException {
-
         DataInputStream inStream = new DataInputStream(inputStream);
-        long longNumber;
-        try{
-            longNumber = inStream.readLong();
-        }catch (IOException e){
-            if(advancedLog)
-                if(Logger.isInitialized()) {
-                    Logger.log(e);
-                }else{
-                    e.printStackTrace();
-                }
+        try {
+            return inStream.readLong();
+        } catch (IOException e) {
+            if(advancedLog) Logger.log(e);
             throw new InputStreamReadException(e);
         }
-        return longNumber;
     }
     private static float readFloat(InputStream inputStream, boolean advancedLog) throws InputStreamReadException {
-        
         DataInputStream inStream = new DataInputStream(inputStream);
-        float floatNumber;
-        try{
-            floatNumber = inStream.readFloat();
-        }catch (IOException e){
-            if(advancedLog)
-                if(Logger.isInitialized()) {
-                    Logger.log(e);
-                }else{
-                    e.printStackTrace();
-                }
+        try {
+            return inStream.readFloat();
+        } catch (IOException e) {
+            if(advancedLog) Logger.log(e);
             throw new InputStreamReadException(e);
         }
-        return floatNumber;
     }
     private static double readDouble(InputStream inputStream, boolean advancedLog) throws  InputStreamReadException {
-        
         DataInputStream inStream = new DataInputStream(inputStream);
-        double doubleNumber;
-        try{
-            doubleNumber = inStream.readDouble();
-        }catch (IOException e){
-            if(advancedLog)
-                if(Logger.isInitialized()) {
-                    Logger.log(e);
-                }else{
-                    e.printStackTrace();
-                }
+        try {
+            return inStream.readDouble();
+        } catch (IOException e) {
+            if(advancedLog) Logger.log(e);
             throw new InputStreamReadException(e);
         }
-        return doubleNumber;
     }
     private static boolean readBoolean(InputStream inputStream, boolean advancedLog) throws InputStreamReadException {
-
         DataInputStream inStream = new DataInputStream(inputStream);
-        boolean state;
-        try{
-            state = inStream.readBoolean();
-        }catch (IOException e){
-            if(advancedLog)
-                if(Logger.isInitialized()) {
-                    Logger.log(e);
-                }else{
-                    e.printStackTrace();
-                }
+        try {
+            return inStream.readBoolean();
+        } catch (IOException e) {
+            if(advancedLog) Logger.log(e);
             throw new InputStreamReadException(e);
         }
-        return state;
     }
     private static String readString(InputStream inputStream, boolean advancedLog) throws InputStreamReadException {
-
         DataInputStream inStream = new DataInputStream(inputStream);
         int length;
         byte[] byteStr;
-
         try {
             length = inStream.readInt();
             if (length > 0) {
@@ -414,71 +311,41 @@ public final class RawSerializer {
             }else {
                 return null;
             }
-        }catch (IOException e){
-            if(advancedLog)
-                if(Logger.isInitialized()) {
-                    Logger.log(e);
-                }else{
-                    e.printStackTrace();
-                }
+        } catch (IOException e) {
+            if(advancedLog) Logger.log(e);
             throw new InputStreamReadException(e);
         }
     }
     private static Object readObject(InputStream inputStream, boolean advancedLog) throws InputStreamReadException, ClassNotFoundException, SpecializedStreamInstancingException {
-        
         ObjectInputStream inStream;
         try {
             inStream = new ObjectInputStream(inputStream);
         }catch (IOException e){
-            if(advancedLog)
-                if(Logger.isInitialized()) {
-                    Logger.log(e);
-                }else{
-                    e.printStackTrace();
-                }
+            if(advancedLog) Logger.log(e);
             throw new SpecializedStreamInstancingException(e);
         }
-        Object obj;
         try{
-            obj = inStream.readObject();
+            return inStream.readObject();
         }catch (IOException e){
-            if(advancedLog)
-                if(Logger.isInitialized()) {
-                    Logger.log(e);
-                }else{
-                    e.printStackTrace();
-                }
+            if(advancedLog) Logger.log(e);
             throw new InputStreamReadException(e);
         } catch (ClassNotFoundException e) {
-            if (advancedLog)
-                if(Logger.isInitialized()) {
-                    Logger.log(e);
-                }else{
-                    e.printStackTrace();
-                }
+            if(advancedLog) Logger.log(e);
             throw e;
         }
-        return obj;
     }
     private static FormattedImage readFormattedImage(InputStream inputStream, boolean advancedLog) throws InputStreamReadException, CorruptedImageException {
-
         String formatName = RawSerializer.receiveString(inputStream);
-
         String base64image = RawSerializer.receiveString(inputStream);
-
         byte[] imageByte = Base64.getDecoder().decode(base64image);
-
         ByteArrayInputStream inStream = new ByteArrayInputStream(imageByte);
-
         try {
             return new FormattedImage(ImageIO.read(inStream),formatName);
         }catch (IOException e) {
             throw new CorruptedImageException(e);
         }
-
     }
     private static byte[] readBytes(InputStream inputStream, boolean advancedLog) throws InputStreamReadException {
-
         String base64byteString = RawSerializer.receiveString(inputStream, advancedLog);
         return Base64.getDecoder().decode(base64byteString);
     }

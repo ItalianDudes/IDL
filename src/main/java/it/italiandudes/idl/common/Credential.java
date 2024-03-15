@@ -5,6 +5,8 @@
 package it.italiandudes.idl.common;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -13,65 +15,47 @@ import java.util.Arrays;
 public class Credential implements Serializable {
 
     //Attributes
-    private final String username;
-    private final String password;
+    @NotNull private final String username;
+    @Nullable private final String password;
 
     //Builders
-    public Credential(){
-        this.username = null;
-        this.password = null;
-    }
-    public Credential(String username, String password, boolean encryptPassword){
+    public Credential(@NotNull String username, @Nullable String password, boolean encryptPassword){
         this.username = username;
-        if(encryptPassword)
-            this.password = DigestUtils.sha512Hex(password);
-        else
-            this.password = password;
+        if (password != null) {
+            if (encryptPassword) this.password = DigestUtils.sha512Hex(password);
+            else this.password = password;
+        } else this.password = null;
     }
-    public Credential(String username, char[] password, boolean encryptPassword){
+    public Credential(@NotNull String username, char @Nullable[] password, boolean encryptPassword){
         this.username = username;
-        if(encryptPassword)
-            this.password = DigestUtils.sha512Hex(passwordCharArrayToString(password));
-        else
-            this.password = passwordCharArrayToString(password);
+        if (password != null) {
+            if (encryptPassword) this.password = DigestUtils.sha512Hex(passwordCharArrayToString(password));
+            else this.password = passwordCharArrayToString(password);
+        } else this.password = null;
     }
-    public Credential(String username, String password){
+    public Credential(@NotNull String username, @Nullable String password){
         this(username,password,true);
     }
-    public Credential(String username, char[] password){
+    public Credential(@NotNull String username, char @Nullable[] password){
         this(username,password,true);
     }
 
     //Methods
+    @NotNull
     public String getUsername(){
         return username;
     }
-
+    @Nullable
     public String getPassword(){
         return password;
     }
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Credential)) return false;
-
-        Credential that = (Credential) o;
-
-        if (!getUsername().equals(that.getUsername())) return false;
-        return getPassword().equals(that.getPassword());
-    }
-    @Override
-    public int hashCode() {
-        int result = getUsername().hashCode();
-        result = 31 * result + getPassword().hashCode();
-        return result;
-    }
-    @Override
     public String toString(){
-        return "Username: "+username+"\nPassword: "+password;
+        return "Username: "+username + (password!=null?"\nPassword: "+password:"");
     }
-
-    private String passwordCharArrayToString(char[] passwordCharArray){
-        return Arrays.toString(passwordCharArray);
+    @Nullable
+    private String passwordCharArrayToString(char @Nullable[] passwordCharArray){
+        if (passwordCharArray == null) return null;
+        else return Arrays.toString(passwordCharArray);
     }
 }

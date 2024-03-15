@@ -20,20 +20,16 @@ public final class DirectoryHandler {
     //Methods
     public static boolean createDirectory(String directoryName){
         File directoryPointer = new File(directoryName);
-        if(!directoryPointer.exists())
-            return directoryPointer.mkdir();
-        else
-            return false;
+        if(!directoryPointer.exists()) return directoryPointer.mkdir();
+        else return false;
     }
     public static boolean deleteDirectory(String directoryPath){
-        if(directoryPath==null)
-            return false;
+        if(directoryPath == null) return false;
         File directoryPointer = new File(directoryPath);
         return deleteDirectory(directoryPointer);
     }
     public static boolean deleteDirectory(File directory) {
-        if (directory == null)
-            return false;
+        if (directory == null) return false;
         if (directory.exists() && directory.isDirectory()) {
             try {
                 FileUtils.deleteDirectory(directory);

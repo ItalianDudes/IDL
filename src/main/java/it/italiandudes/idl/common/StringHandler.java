@@ -20,11 +20,9 @@ public final class StringHandler {
     public static void sendString(OutputStream out, String str) throws IOException {
         RawSerializer.sendString(out,str);
     }
-
     public static String receiveString(InputStream in) throws IOException{
         return RawSerializer.receiveString(in);
     }
-
     public static String getStringBeforeChar(String str, char car){
         if(str==null)
             return null;

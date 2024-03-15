@@ -6,6 +6,7 @@ package it.italiandudes.idl.common;
 
 import java.io.Serializable;
 
+@Deprecated
 public class Property implements Serializable {
 
     //Attributes

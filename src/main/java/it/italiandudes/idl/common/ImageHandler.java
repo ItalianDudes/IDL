@@ -33,5 +33,4 @@ public final class ImageHandler {
     public static BufferedImage readImage(File imageFile) throws IOException{
         return ImageIO.read(imageFile);
     }
-
 }

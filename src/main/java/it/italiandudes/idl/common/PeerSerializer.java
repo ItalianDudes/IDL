@@ -12,7 +12,8 @@ import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.io.*;
 import java.util.Base64;
 
-@SuppressWarnings("unused")
+@SuppressWarnings("all")
+@Deprecated
 public final class PeerSerializer {
 
     //Constructors

@@ -8,6 +8,7 @@ import java.io.Serializable;
 
 @SuppressWarnings("unused")
 public class InfoFlags implements Serializable {
+
     //Attributes
     private final boolean isException;
     private final boolean isError;

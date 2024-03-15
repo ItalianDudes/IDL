@@ -12,6 +12,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 @SuppressWarnings("unused")
+@Deprecated
 public class Peer implements Serializable {
 
     //Attributes
