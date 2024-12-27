@@ -6,11 +6,13 @@ package it.italiandudes.idl.common;
 
 import it.italiandudes.idl.IDL;
 import org.apache.commons.io.FileUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.NoSuchElementException;
@@ -23,11 +25,15 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings({"UnusedReturnValue","unused"})
 public final class Logger {
 
+    // Constants
+    private static final SimpleDateFormat DEFAULT_TIME_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.sss");
+
     //Attributes
     private static final File latestLogFilePointer = new File(IDL.Defs.LOG_LATEST_FILE);
     private static BufferedWriter logger = null;
     private static ExecutorService queue = null;
     private final static LocalDateTime startTime = LocalDateTime.now();
+    private static SimpleDateFormat TIME_FORMAT;
 
     //Classes
     private static final class LogWriter implements Runnable {
@@ -49,16 +55,16 @@ public final class Logger {
         @Override
         public void run() {
             if(flags.isErrStream()){
-                System.err.println(flags+"[" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "] " + message);
+                System.err.println(flags+"[" + TIME_FORMAT.format(LocalDateTime.now()) + "] " + message);
                 System.err.flush();
             }else {
-                System.out.println(flags+"[" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "] " + message);
+                System.out.println(flags+"[" + TIME_FORMAT.format(LocalDateTime.now()) + "] " + message);
                 System.out.flush();
             }
             try {
                 writeMessageIntoLogFile(message, flags);
             } catch (IOException e) {
-                System.err.println("[EXCEPTION]"+"[" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "] Can't write log message into log file!");
+                System.err.println("[EXCEPTION]"+"[" + TIME_FORMAT.format(LocalDateTime.now()) + "] Can't write log message into log file!");
             }
         }
     }
@@ -72,7 +78,8 @@ public final class Logger {
     public static boolean isInitialized(){
         return logger != null;
     }
-    public static boolean init(boolean logUncaughtExceptions) throws IOException {
+    public static boolean init(boolean logUncaughtExceptions, @NotNull final SimpleDateFormat timeFormatter) throws IOException {
+        TIME_FORMAT = timeFormatter;
         try {
             backupOldLog();
         }catch (IOException e){
@@ -81,7 +88,7 @@ public final class Logger {
         File logDirectory = new File(IDL.Defs.LOG_DIR);
         if(!logDirectory.exists() || !logDirectory.isDirectory()) {
             if (!logDirectory.mkdir()) {
-                System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Can't create log directory!");
+                System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(LocalDateTime.now())+"] Can't create log directory!");
                 return false;
             }
         }
@@ -91,8 +98,11 @@ public final class Logger {
             Thread.setDefaultUncaughtExceptionHandler((t, e) -> Logger.log(e));
         return logCreated;
     }
+    public static boolean init(@NotNull final SimpleDateFormat timeFormatter) throws IOException {
+        return init(true, timeFormatter);
+    }
     public static boolean init() throws IOException {
-        return init(true);
+        return init(true, DEFAULT_TIME_FORMAT);
     }
     public static void log(String message){
         log(message,new InfoFlags());
@@ -149,15 +159,16 @@ public final class Logger {
                     new CountDownLatch(1).countDown();
                 }catch (InterruptedException e){
                     Logger.log(e);
-                    System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] An error has occurred during queue termination");
+
+                    System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(LocalDateTime.now())+"] An error has occurred during queue termination");
                 }
                 if(!result) {
-                    System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Time elapsed before queue termination");
+                    System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(LocalDateTime.now())+"] Time elapsed before queue termination");
                 }
                 try{
                     logger.close();
                 }catch (IOException e){
-                    System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Can't close log file!");
+                    System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(LocalDateTime.now())+"] Can't close log file!");
                 }
             }).start();
     }
@@ -170,22 +181,22 @@ public final class Logger {
             logger.append(date).append("\n");
             logger.flush();
         }catch (IOException e){
-            System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Can't initialize logger!");
+            System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(LocalDateTime.now())+"] Can't initialize logger!");
             throw e;
         }
         return true;
     }
     private synchronized static void writeMessageIntoLogFile(String message, InfoFlags flags) throws IOException {
         try {
-            logger.append(flags.toString()).append("[").append(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)).append("] ").append(message).append("\n");
+            logger.append(flags.toString()).append("[").append(TIME_FORMAT.format(LocalDateTime.now())).append("] ").append(message).append("\n");
         }catch (IOException e){
-            System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Can't write message into log file!");
+            System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(LocalDateTime.now())+"] Can't write message into log file!");
             throw e;
         }
         try {
             logger.flush();
         }catch (IOException e){
-            System.err.println("[ERROR][FATAL]["+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"] Can't flush log file!");
+            System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(LocalDateTime.now())+"] Can't flush log file!");
             throw e;
         }
     }

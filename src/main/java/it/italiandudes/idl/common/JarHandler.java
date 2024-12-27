@@ -2,7 +2,10 @@ package it.italiandudes.idl.common;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.*;
 import java.util.Enumeration;
 import java.util.jar.Attributes;
