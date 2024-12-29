@@ -54,17 +54,17 @@ public final class Logger {
         //Methods
         @Override
         public void run() {
-            if(flags.isErrStream()){
-                System.err.println(flags+"[" + TIME_FORMAT.format(LocalDateTime.now()) + "] " + message);
+            if (flags.isErrStream()) {
+                System.err.println(flags + "[" + TIME_FORMAT.format(System.currentTimeMillis()) + "] " + message);
                 System.err.flush();
-            }else {
-                System.out.println(flags+"[" + TIME_FORMAT.format(LocalDateTime.now()) + "] " + message);
+            } else {
+                System.out.println(flags + "[" + TIME_FORMAT.format(System.currentTimeMillis()) + "] " + message);
                 System.out.flush();
             }
             try {
                 writeMessageIntoLogFile(message, flags);
             } catch (IOException e) {
-                System.err.println("[EXCEPTION]"+"[" + TIME_FORMAT.format(LocalDateTime.now()) + "] Can't write log message into log file!");
+                System.err.println("[EXCEPTION]" + "[" + TIME_FORMAT.format(System.currentTimeMillis()) + "] Can't write log message into log file!");
             }
         }
     }
@@ -88,7 +88,7 @@ public final class Logger {
         File logDirectory = new File(IDL.Defs.LOG_DIR);
         if(!logDirectory.exists() || !logDirectory.isDirectory()) {
             if (!logDirectory.mkdir()) {
-                System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(LocalDateTime.now())+"] Can't create log directory!");
+                System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"] Can't create log directory!");
                 return false;
             }
         }
@@ -160,15 +160,15 @@ public final class Logger {
                 }catch (InterruptedException e){
                     Logger.log(e);
 
-                    System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(LocalDateTime.now())+"] An error has occurred during queue termination");
+                    System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"] An error has occurred during queue termination");
                 }
                 if(!result) {
-                    System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(LocalDateTime.now())+"] Time elapsed before queue termination");
+                    System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"] Time elapsed before queue termination");
                 }
                 try{
                     logger.close();
                 }catch (IOException e){
-                    System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(LocalDateTime.now())+"] Can't close log file!");
+                    System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"] Can't close log file!");
                 }
             }).start();
     }
@@ -181,22 +181,22 @@ public final class Logger {
             logger.append(date).append("\n");
             logger.flush();
         }catch (IOException e){
-            System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(LocalDateTime.now())+"] Can't initialize logger!");
+            System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"] Can't initialize logger!");
             throw e;
         }
         return true;
     }
     private synchronized static void writeMessageIntoLogFile(String message, InfoFlags flags) throws IOException {
         try {
-            logger.append(flags.toString()).append("[").append(TIME_FORMAT.format(LocalDateTime.now())).append("] ").append(message).append("\n");
+            logger.append(flags.toString()).append("[").append(TIME_FORMAT.format(System.currentTimeMillis())).append("] ").append(message).append("\n");
         }catch (IOException e){
-            System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(LocalDateTime.now())+"] Can't write message into log file!");
+            System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"] Can't write message into log file!");
             throw e;
         }
         try {
             logger.flush();
         }catch (IOException e){
-            System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(LocalDateTime.now())+"] Can't flush log file!");
+            System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"] Can't flush log file!");
             throw e;
         }
     }
