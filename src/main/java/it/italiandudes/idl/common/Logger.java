@@ -35,7 +35,7 @@ public final class Logger {
     private static ExecutorService queue = null;
     private final static LocalDateTime startTime = LocalDateTime.now();
     private static SimpleDateFormat TIME_FORMAT;
-    @Nullable private static String context = null;
+    @Nullable private static String globalContext = null;
 
     // [DATE][CONTEXT] Message
 
@@ -79,11 +79,18 @@ public final class Logger {
     }
 
     //Methods
-    public synchronized static void setContext(@Nullable String context) {
-        Logger.context = context;
+
+    /**
+     * Add a context to the logs.
+     * This is useful in case of nested applications or threads.
+     * NOTE: The context is global, if you want a local context, use the log() with the context
+     * @param globalContext The new global context
+     */
+    public synchronized static void setGlobalContext(@Nullable String globalContext) {
+        Logger.globalContext = globalContext;
     }
-    public static @Nullable String getContext() {
-        return context;
+    public static @Nullable String getGlobalContext() {
+        return globalContext;
     }
     public static boolean isInitialized(){
         return logger != null;
@@ -93,12 +100,12 @@ public final class Logger {
         try {
             backupOldLog();
         }catch (IOException e){
-            System.err.println("[ERROR][" + TIME_FORMAT.format(System.currentTimeMillis()) + "]" + (context!=null?"[" + context + "] ":" ") + "Error during old log file copy");
+            System.err.println("[ERROR][" + TIME_FORMAT.format(System.currentTimeMillis()) + "]" + (globalContext !=null?"[" + globalContext + "] ":" ") + "Error during old log file copy");
         }
         File logDirectory = new File(IDL.Defs.LOG_DIR);
         if(!logDirectory.exists() || !logDirectory.isDirectory()) {
             if (!logDirectory.mkdir()) {
-                System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"]" + (context!=null?"[" + context + "] ":" ") + "Can't create log directory!");
+                System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"]" + (globalContext !=null?"[" + globalContext + "] ":" ") + "Can't create log directory!");
                 return false;
             }
         }
@@ -117,8 +124,17 @@ public final class Logger {
     public static void log(String message){
         log(message,new InfoFlags());
     }
+    public static void log(String message, String context) {
+        log(message, new InfoFlags(), context);
+    }
+    public static void log(Throwable throwable, String context) {
+        log(StringHandler.getStackTrace(throwable), new InfoFlags(throwable, false), context);
+    }
     public static void log(Throwable throwable, InfoFlags flags){
         log(StringHandler.getStackTrace(throwable),flags);
+    }
+    public static void log(Throwable throwable, InfoFlags flags, String context) {
+        log(StringHandler.getStackTrace(throwable), flags, context);
     }
     public static void log(Throwable throwable){ //Not Fatal by Default
         log(StringHandler.getStackTrace(throwable), new InfoFlags(throwable,false));
@@ -126,14 +142,17 @@ public final class Logger {
     public static void logWithCaller(String message){
         log("["+Thread.currentThread().getStackTrace()[2]+"] "+message);
     }
-    public static void log(String message, InfoFlags flags){
+    public static void log(String message, InfoFlags flags) {
+        log(message, flags, globalContext);
+    }
+    public static void log(String message, InfoFlags flags, String context){
         if(Logger.isInitialized() && !queue.isShutdown()) {
             queue.submit(new LogWriter(message, flags, context));
         }else{
             if(flags.isErrStream()){
-                System.err.println("[" + TIME_FORMAT.format(System.currentTimeMillis()) + "][ERR]" + (context!=null?"[" + context + "] ":" ") + message);
+                System.err.println("[" + TIME_FORMAT.format(System.currentTimeMillis()) + "][ERR]" + (context !=null?"[" + context + "] ":" ") + message);
             }else{
-                System.out.println("[" + TIME_FORMAT.format(System.currentTimeMillis()) + "]" + (context!=null?"[" + context + "] ":" ") + message);
+                System.out.println("[" + TIME_FORMAT.format(System.currentTimeMillis()) + "]" + (context !=null?"[" + context + "] ":" ") + message);
             }
         }
     }
@@ -170,15 +189,15 @@ public final class Logger {
                 }catch (InterruptedException e){
                     Logger.log(e);
 
-                    System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"]" + (context!=null?"[" + context + "] ":" ") +  "An error has occurred during queue termination");
+                    System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"]" + (globalContext !=null?"[" + globalContext + "] ":" ") +  "An error has occurred during queue termination");
                 }
                 if(!result) {
-                    System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"]" + (context!=null?"[" + context + "] ":" ") + "Time elapsed before queue termination");
+                    System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"]" + (globalContext !=null?"[" + globalContext + "] ":" ") + "Time elapsed before queue termination");
                 }
                 try{
                     logger.close();
                 }catch (IOException e){
-                    System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"]" + (context!=null?"[" + context + "] ":" ") + "Can't close log file!");
+                    System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"]" + (globalContext !=null?"[" + globalContext + "] ":" ") + "Can't close log file!");
                 }
             }).start();
     }
@@ -191,7 +210,7 @@ public final class Logger {
             logger.append(date).append("\n");
             logger.flush();
         }catch (IOException e){
-            System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"]" + (context!=null?"[" + context + "] ":" ") + "Can't initialize logger!");
+            System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"]" + (globalContext !=null?"[" + globalContext + "] ":" ") + "Can't initialize logger!");
             throw e;
         }
         return true;
