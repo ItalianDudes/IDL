@@ -7,6 +7,7 @@ package it.italiandudes.idl.common;
 import it.italiandudes.idl.IDL;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -34,37 +35,40 @@ public final class Logger {
     private static ExecutorService queue = null;
     private final static LocalDateTime startTime = LocalDateTime.now();
     private static SimpleDateFormat TIME_FORMAT;
+    @Nullable private static String context = null;
+
+    // [DATE][CONTEXT] Message
 
     //Classes
     private static final class LogWriter implements Runnable {
 
         //Attributes
-        private final String message;
-        private final InfoFlags flags;
+        @NotNull private final String message;
+        @Nullable private final String context;
+        @NotNull private final InfoFlags flags;
 
         //Constructors
-        public LogWriter(String message, InfoFlags flags){
+        public LogWriter(@NotNull String message, @Nullable InfoFlags flags, @Nullable String context){
             this.message = message;
-            if(flags==null)
-                this.flags = new InfoFlags();
-            else
-                this.flags = flags;
+            if(flags==null) this.flags = new InfoFlags();
+            else this.flags = flags;
+            this.context = context;
         }
 
         //Methods
         @Override
         public void run() {
             if (flags.isErrStream()) {
-                System.err.println(flags + "[" + TIME_FORMAT.format(System.currentTimeMillis()) + "] " + message);
+                System.err.println(flags + "[" + TIME_FORMAT.format(System.currentTimeMillis()) + "]" + (context!=null?"[" + context + "] ":" ") + message);
                 System.err.flush();
             } else {
-                System.out.println(flags + "[" + TIME_FORMAT.format(System.currentTimeMillis()) + "] " + message);
+                System.out.println(flags + "[" + TIME_FORMAT.format(System.currentTimeMillis()) + "]" + (context!=null?"[" + context + "] ":" ") + message);
                 System.out.flush();
             }
             try {
-                writeMessageIntoLogFile(message, flags);
+                writeMessageIntoLogFile(message, flags, context);
             } catch (IOException e) {
-                System.err.println("[EXCEPTION]" + "[" + TIME_FORMAT.format(System.currentTimeMillis()) + "] Can't write log message into log file!");
+                System.err.println("[EXCEPTION]" + "[" + TIME_FORMAT.format(System.currentTimeMillis()) + "]" + (context!=null?"[" + context + "] ":" ") + "Can't write log message into log file!");
             }
         }
     }
@@ -75,6 +79,12 @@ public final class Logger {
     }
 
     //Methods
+    public synchronized static void setContext(@Nullable String context) {
+        Logger.context = context;
+    }
+    public static @Nullable String getContext() {
+        return context;
+    }
     public static boolean isInitialized(){
         return logger != null;
     }
@@ -83,12 +93,12 @@ public final class Logger {
         try {
             backupOldLog();
         }catch (IOException e){
-            System.err.println("Error during old log file copy");
+            System.err.println("[ERROR][" + TIME_FORMAT.format(System.currentTimeMillis()) + "]" + (context!=null?"[" + context + "] ":" ") + "Error during old log file copy");
         }
         File logDirectory = new File(IDL.Defs.LOG_DIR);
         if(!logDirectory.exists() || !logDirectory.isDirectory()) {
             if (!logDirectory.mkdir()) {
-                System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"] Can't create log directory!");
+                System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"]" + (context!=null?"[" + context + "] ":" ") + "Can't create log directory!");
                 return false;
             }
         }
@@ -118,12 +128,12 @@ public final class Logger {
     }
     public static void log(String message, InfoFlags flags){
         if(Logger.isInitialized() && !queue.isShutdown()) {
-            queue.submit(new LogWriter(message, flags));
+            queue.submit(new LogWriter(message, flags, context));
         }else{
             if(flags.isErrStream()){
-                System.err.println(message);
+                System.err.println("[" + TIME_FORMAT.format(System.currentTimeMillis()) + "][ERR]" + (context!=null?"[" + context + "] ":" ") + message);
             }else{
-                System.out.println(message);
+                System.out.println("[" + TIME_FORMAT.format(System.currentTimeMillis()) + "]" + (context!=null?"[" + context + "] ":" ") + message);
             }
         }
     }
@@ -160,15 +170,15 @@ public final class Logger {
                 }catch (InterruptedException e){
                     Logger.log(e);
 
-                    System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"] An error has occurred during queue termination");
+                    System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"]" + (context!=null?"[" + context + "] ":" ") +  "An error has occurred during queue termination");
                 }
                 if(!result) {
-                    System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"] Time elapsed before queue termination");
+                    System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"]" + (context!=null?"[" + context + "] ":" ") + "Time elapsed before queue termination");
                 }
                 try{
                     logger.close();
                 }catch (IOException e){
-                    System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"] Can't close log file!");
+                    System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"]" + (context!=null?"[" + context + "] ":" ") + "Can't close log file!");
                 }
             }).start();
     }
@@ -181,22 +191,22 @@ public final class Logger {
             logger.append(date).append("\n");
             logger.flush();
         }catch (IOException e){
-            System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"] Can't initialize logger!");
+            System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"]" + (context!=null?"[" + context + "] ":" ") + "Can't initialize logger!");
             throw e;
         }
         return true;
     }
-    private synchronized static void writeMessageIntoLogFile(String message, InfoFlags flags) throws IOException {
+    private synchronized static void writeMessageIntoLogFile(String message, InfoFlags flags, String context) throws IOException {
         try {
-            logger.append(flags.toString()).append("[").append(TIME_FORMAT.format(System.currentTimeMillis())).append("] ").append(message).append("\n");
+            logger.append(flags.toString()).append("[").append(TIME_FORMAT.format(System.currentTimeMillis())).append("]").append(context!=null?"[" + context + "] ":" ").append(message).append("\n");
         }catch (IOException e){
-            System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"] Can't write message into log file!");
+            System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"]" + (context!=null?"[" + context + "] ":" ") + "Can't write message into log file!");
             throw e;
         }
         try {
             logger.flush();
         }catch (IOException e){
-            System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"] Can't flush log file!");
+            System.err.println("[ERROR][FATAL]["+TIME_FORMAT.format(System.currentTimeMillis())+"]" + (context!=null?"[" + context + "] ":" ") + "Can't flush log file!");
             throw e;
         }
     }
