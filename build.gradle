@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'it.italiandudes'
-version '1.0.9'
+version '1.1'
 def versionType = 'RELEASE'
 def versionMarker = versionType.charAt(0)
 
@@ -16,7 +16,7 @@ dependencies {
     compileOnly 'commons-codec:commons-codec:1.17.1'
     compileOnly 'commons-io:commons-io:2.18.0'
     compileOnly 'org.xerial:sqlite-jdbc:3.47.1.0'
-    compileOnly 'org.json:json:20240303'
+    compileOnly 'org.json:json:20250107'
 }
 
 jar {
