@@ -6,10 +6,10 @@ import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("unused")
 public enum TargetPlatform {
-    LINUX("linux", "Linux", SystemUtils.IS_OS_LINUX && SystemUtils.OS_ARCH.contains("x86")),
+    LINUX("linux", "Linux", SystemUtils.IS_OS_LINUX && (SystemUtils.OS_ARCH.contains("x86") || SystemUtils.OS_ARCH.contains("amd64"))),
     LINUX_AARCH64("linux-aarch64", "Linux (ARM)", SystemUtils.IS_OS_LINUX),
     WINDOWS("windows", "Windows", SystemUtils.IS_OS_WINDOWS),
-    MAC("mac", "Mac OSX", SystemUtils.IS_OS_MAC && SystemUtils.OS_ARCH.contains("x86")),
+    MAC("mac", "Mac OSX", SystemUtils.IS_OS_MAC && (SystemUtils.OS_ARCH.contains("x86") || SystemUtils.OS_ARCH.contains("amd64"))),
     MAC_AARCH64("mac-aarch64", "Mac OSX (ARM)", SystemUtils.IS_OS_MAC);
 
     // Attributes
