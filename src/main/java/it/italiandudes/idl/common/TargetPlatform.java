@@ -34,6 +34,13 @@ public enum TargetPlatform {
         }
         return null;
     }
+    @Nullable
+    public static TargetPlatform getCurrentPlatform() {
+        for (TargetPlatform targetPlatform : TargetPlatform.values()) {
+            if (targetPlatform.isCurrentOS()) return targetPlatform;
+        }
+        return null;
+    }
 
     // Methods
     @NotNull
