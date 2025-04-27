@@ -4,7 +4,11 @@
  */
 package it.italiandudes.idl.common;
 
-@SuppressWarnings("unused")
+/**
+ *
+ * @deprecated Use Apache Commons Lang Instead
+ * */
+@SuppressWarnings("unused") @Deprecated
 public final class OSUtils {
     public static String getOsName() {
         return System.getProperty("os.name");

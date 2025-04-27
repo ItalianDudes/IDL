@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'it.italiandudes'
-version '1.1'
+version '1.2'
 def versionType = 'RELEASE'
 def versionMarker = versionType.charAt(0)
 
@@ -13,6 +13,7 @@ repositories {
 
 dependencies {
     compileOnly 'org.jetbrains:annotations:26.0.1'
+    compileOnly 'org.apache.commons:commons-lang3:3.17.0'
     compileOnly 'commons-codec:commons-codec:1.17.1'
     compileOnly 'commons-io:commons-io:2.18.0'
     compileOnly 'org.xerial:sqlite-jdbc:3.47.1.0'
