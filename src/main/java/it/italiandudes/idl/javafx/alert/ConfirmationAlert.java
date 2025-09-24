@@ -15,7 +15,7 @@ public final class ConfirmationAlert extends Alert {
     public final boolean result;
 
     //Constructors
-    public ConfirmationAlert(@NotNull final Stage owner, String title, String header, String content, String cssThemeExternalForm) {
+    public ConfirmationAlert(@NotNull final Stage owner, String title, String header, String content) {
         super(AlertType.CONFIRMATION);
         this.setResizable(true);
         if (!owner.getIcons().isEmpty()) {
@@ -29,17 +29,16 @@ public final class ConfirmationAlert extends Alert {
             area.setEditable(false);
             getDialogPane().setContent(area);
         }
-        if (cssThemeExternalForm != null) this.getDialogPane().getScene().getStylesheets().add(cssThemeExternalForm);
+        if (!owner.getScene().getStylesheets().isEmpty()) {
+            this.getDialogPane().getScene().getStylesheets().add(owner.getScene().getStylesheets().getFirst());
+        }
         Optional<ButtonType> result = showAndWait();
         this.result = result.isPresent() && result.get().equals(ButtonType.OK);
     }
-    public ConfirmationAlert(@NotNull final Stage owner, String header, String content, String cssThemeExternalForm){
-        this(owner, null, header, content, cssThemeExternalForm);
-    }
-    public ConfirmationAlert(@NotNull final Stage owner, String cssThemeExternalForm){
-        this(owner, null,null,null, cssThemeExternalForm);
+    public ConfirmationAlert(@NotNull final Stage owner, String header, String content){
+        this(owner, null, header, content);
     }
     public ConfirmationAlert(@NotNull final Stage owner) {
-        this(owner, null, null, null, null);
+        this(owner, null, null, null);
     }
 }

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public final class InformationAlert extends Alert {
 
     // Constructors
-    public InformationAlert(@NotNull final Stage owner, String title, String header, String content, String cssThemeExternalForm) {
+    public InformationAlert(@NotNull final Stage owner, String title, String header, String content) {
         super(AlertType.INFORMATION);
         this.setResizable(true);
         if (!owner.getIcons().isEmpty()) {
@@ -23,16 +23,15 @@ public final class InformationAlert extends Alert {
             area.setEditable(false);
             getDialogPane().setContent(area);
         }
-        if (cssThemeExternalForm != null) this.getDialogPane().getScene().getStylesheets().add(cssThemeExternalForm);
+        if (!owner.getScene().getStylesheets().isEmpty()) {
+            this.getDialogPane().getScene().getStylesheets().add(owner.getScene().getStylesheets().getFirst());
+        }
         showAndWait();
     }
-    public InformationAlert(@NotNull final Stage owner, String header, String content, String cssThemeExternalForm){
-        this(owner, null, header, content, cssThemeExternalForm);
-    }
-    public InformationAlert(@NotNull final Stage owner, String cssThemeExternalForm){
-        this(owner, null,null,null, cssThemeExternalForm);
+    public InformationAlert(@NotNull final Stage owner, String header, String content){
+        this(owner, null, header, content);
     }
     public InformationAlert(@NotNull final Stage owner) {
-        this(owner, null, null, null, null);
+        this(owner, null, null, null);
     }
 }

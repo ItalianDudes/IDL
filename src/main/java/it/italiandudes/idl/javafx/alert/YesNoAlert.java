@@ -16,7 +16,7 @@ public final class YesNoAlert extends Alert {
     public final boolean result;
 
     //Constructors
-    public YesNoAlert(@NotNull final Stage owner, String title, String header, String content, String cssThemeExternalForm) {
+    public YesNoAlert(@NotNull final Stage owner, String title, String header, String content) {
         super(AlertType.CONFIRMATION);
         this.setResizable(true);
         if (!owner.getIcons().isEmpty()) {
@@ -33,17 +33,16 @@ public final class YesNoAlert extends Alert {
         getButtonTypes().clear();
         ButtonType yes = new ButtonType("Si", ButtonBar.ButtonData.YES);
         getButtonTypes().addAll(yes, new ButtonType("No", ButtonBar.ButtonData.NO));
-        if (cssThemeExternalForm != null) this.getDialogPane().getScene().getStylesheets().add(cssThemeExternalForm);
+        if (!owner.getScene().getStylesheets().isEmpty()) {
+            this.getDialogPane().getScene().getStylesheets().add(owner.getScene().getStylesheets().getFirst());
+        }
         Optional<ButtonType> result = showAndWait();
         this.result = result.isPresent() && result.get().equals(yes);
     }
-    public YesNoAlert(@NotNull final Stage owner, String header, String content, String cssThemeExternalForm){
-        this(owner, null, header, content, cssThemeExternalForm);
+    public YesNoAlert(@NotNull final Stage owner, String header, String content){
+        this(owner, null, header, content);
     }
-    public YesNoAlert(@NotNull final Stage owner, String cssThemeExternalForm){
-        this(owner, null,null,null, cssThemeExternalForm);
-    }
-    public YesNoAlert(@NotNull final Stage owner) {
-        this(owner, null, null, null, null);
+    public YesNoAlert(@NotNull final Stage owner){
+        this(owner, null,null,null);
     }
 }
