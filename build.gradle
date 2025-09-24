@@ -1,9 +1,10 @@
 plugins {
     id 'java'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
 group 'it.italiandudes'
-version '1.2.2'
+version '1.3'
 def versionType = 'RELEASE'
 def versionMarker = versionType.charAt(0)
 
@@ -11,13 +12,26 @@ repositories {
     mavenCentral()
 }
 
+// JavaFX Configuration
+javafx {
+    version = "21.0.7"
+    modules = [
+            'javafx.base',
+            'javafx.controls',
+            'javafx.graphics',
+            'javafx.fxml',
+            'javafx.swing',
+            'javafx.media'
+    ]
+}
+
 dependencies {
-    compileOnly 'org.jetbrains:annotations:26.0.1'
-    compileOnly 'org.apache.commons:commons-lang3:3.17.0'
-    compileOnly 'commons-codec:commons-codec:1.17.1'
-    compileOnly 'commons-io:commons-io:2.18.0'
-    compileOnly 'org.xerial:sqlite-jdbc:3.47.1.0'
-    compileOnly 'org.json:json:20250107'
+    compileOnly 'org.jetbrains:annotations:26.0.2-1'
+    compileOnly 'org.apache.commons:commons-lang3:3.18.0'
+    compileOnly 'commons-codec:commons-codec:1.19.0'
+    compileOnly 'commons-io:commons-io:2.20.0'
+    compileOnly 'org.xerial:sqlite-jdbc:3.50.3.0'
+    compileOnly 'org.json:json:20250517'
 }
 
 jar {

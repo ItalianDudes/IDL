@@ -4,13 +4,13 @@
  */
 package it.italiandudes.idl.common;
 
+import it.italiandudes.idl.serialization.RawSerializer;
+
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InvalidObjectException;
-import java.io.ObjectStreamException;
-import java.io.Serializable;
+import java.io.*;
 
 @SuppressWarnings("unused")
+@Deprecated
 public class FormattedImage implements Serializable {
 
     //Attributes
@@ -36,24 +36,24 @@ public class FormattedImage implements Serializable {
     public void setFormatName(String formatName) {
         this.formatName = formatName;
     }
+    @Serial
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {
         RawSerializer.sendFormattedImage(out,this);
     }
+    @Serial
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
         FormattedImage temp = RawSerializer.receiveFormattedImage(in);
         this.formatName = temp.formatName;
         this.image = temp.image;
     }
+    @Serial
     private void readObjectNoData() throws ObjectStreamException {
         throw new InvalidObjectException("Stream data required");
     }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FormattedImage)) return false;
-
-        FormattedImage that = (FormattedImage) o;
-
+        if (!(o instanceof FormattedImage that)) return false;
         if (!getImage().equals(that.getImage())) return false;
         return getFormatName().equals(that.getFormatName());
     }
