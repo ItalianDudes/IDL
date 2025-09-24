@@ -9,7 +9,7 @@ public final class BasicThemeHandler {
     // Attributes
     private final String lightThemeExternalForm;
     private final String darkThemeExternalForm;
-    private String currentTheme = null;
+    private BasicTheme currentTheme = null;
 
     // Constructor
     private BasicThemeHandler(@NotNull final String lightThemeExternalForm, @NotNull final String darkThemeExternalForm) {
@@ -32,15 +32,18 @@ public final class BasicThemeHandler {
 
     // Methods
     public void setCurrentTheme(@NotNull final BasicTheme theme) {
-        if (theme == BasicTheme.DARK) currentTheme = darkThemeExternalForm;
-        else if (theme == BasicTheme.LIGHT) currentTheme = lightThemeExternalForm;
+        currentTheme = theme;
     }
-
-    // Config Theme
+    public BasicTheme getCurrentTheme() {
+        return currentTheme;
+    }
     public void loadTheme(@NotNull final Scene scene, @NotNull final BasicTheme theme) {
-        if (currentTheme == null) setCurrentTheme(theme);
-        scene.getStylesheets().clear();
-        scene.getStylesheets().add(currentTheme);
+        if (theme == BasicTheme.DARK) loadDarkTheme(scene);
+        else if (theme == BasicTheme.LIGHT) loadLightTheme(scene);
+    }
+    public void setAndLoadTheme(@NotNull final Scene scene, @NotNull final BasicTheme theme) {
+        setCurrentTheme(theme);
+        loadTheme(scene, theme);
     }
 
     // Light Theme
